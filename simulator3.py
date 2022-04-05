@@ -545,14 +545,17 @@ class Simulator:
                     data_array = self.ed_arr[j].ed_change_arr
                     subgroup.create_dataset(name=str(self.steps), data=data_array)
 
-    def print_settings(self):
+    def print_settings(self,basefile_name=""):
+        if basefile_name !="":
+            print("HDF5 Base File (Template) " + basefile_name)
+        else:
+            print("Original file (No Base/Template)")
         print("HDF5 File name:" + self.file_name)
         print("==============================")
         print("Dendrite Morphology")
         print("==============================")
         for i in self.comp_arr:
             print(i.name + " Len(um): " + str(i.length*1e5) + " Rad(um): " + str(i.radius*1e5))
-        print("")
         print("==============================")
         print("General settings")
         print("==============================")
@@ -566,7 +569,6 @@ class Simulator:
         print("Starting [K]: " + str(self.comp_arr[1].k_i * 1e3))
         print("Starting [Cl]: " + str(self.comp_arr[1].cl_i * 1e3))
         print("Starting [X]: " + str(self.comp_arr[1].x_i * 1e3))
-        print("")
         print("==============================")
         print("[X]-flux settings")
         print("==============================")
@@ -579,7 +581,6 @@ class Simulator:
                 print("z: " + self.xflux_data_arr[2])
                 print("Start time: " + self.xflux_data_arr[3])
                 print("End time: " + self.xflux_data_arr[4])
-        print("")
         print("==============================")
         print("z-flux settings")
         print("==============================")
@@ -591,8 +592,6 @@ class Simulator:
             print("Start time: " + str(self.sim_zflux_params["start_t"]))
             print("End time: " + str(self.sim_zflux_params["end_t"]))
             print("Adjust x: " + str(self.sim_zflux_params["adjust_X"]))
-
-        print("")
         print("==============================")
         print("Current settings")
         print("==============================")
@@ -605,8 +604,6 @@ class Simulator:
             print("Duration: " + str(self.sim_current_params["duration"]))
             print("Current Amplitude (A): " + str(self.sim_current_params["current_A"]))
             print("Current Frequency (Hz): " + str(self.sim_current_params["frequency"]) )
-
-        print("")
         print("==============================")
         print("Synapse settings")
         print("==============================")
@@ -624,7 +621,6 @@ class Simulator:
             print("end_t: " + str(self.syn_dict["end_t"]))
             print("max [NT](M) :" + str(self.syn_dict["max_neurotransmitter_conc"]))
             print("synaptic conductance: " + str(self.syn_dict["synapse_conductance"]))
-        print("")
         print("==============================")
         print("HH settings")
         print("==============================")
@@ -632,5 +628,4 @@ class Simulator:
             print("No HH channels ")
         else:
             print("HH channels enabled")
-        print("")
         print("===============================")
