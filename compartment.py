@@ -75,7 +75,7 @@ class Compartment:
 
         self.x_default = 154.962e-3
         self.z_default = -0.85
-        self.bool_adjust_x = False
+        self.adjust_x_bool = False
         self.xflux_setup, self.zflux_setup, self.external_xflux_setup = True, True, True
         self.xflux_switch, self.zflux_switch = False, False
         self.xflux, self.xoflux = 0, 0
@@ -254,12 +254,15 @@ class Compartment:
 
         # Note that X_i values may change based on wether there is adjustment with z change
 
-    def update_volumes(self):
+    def update_volumes(self,avg_osmo = 0):
         """ Calculates the new compartment volume (dm3)
         Elongation should occur radially
         """
-
-        self.osm_i = self.na_i + self.k_i + self.cl_i + self.x_i
+        if self.adjust_x_bool:
+            self.osm_i = avg_osmo
+            self.x_i = self.osm_i - self.na_i - self.k_i - self.cl_i
+        else:
+            self.osm_i = self.na_i + self.k_i + self.cl_i + self.x_i
 
         self.dw = self.dt * (vw * pw * self.sa * (self.osm_i - self.osm_o))
         self.w2 = self.w + self.dw
@@ -336,12 +339,8 @@ class Compartment:
             t_diff = (self.zflux_params["end_t"] - self.zflux_params["start_t"]) / self.dt
             self.z_inc = self.z_diff / t_diff
             self.zflux_setup = False
-            self.bool_adjust_x = self.zflux_params["adjust_x"]
         else:
             self.z_i += self.z_inc
-            if self.bool_adjust_x:
-                self.adjust_x()
-
 
     def adjust_x(self):
         """

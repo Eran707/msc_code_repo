@@ -23,6 +23,7 @@ total_t = 100
 time_step = 1e-6
 sim.set_timing(total_t=total_t, time_step=time_step, intervals=1000)
 #sim.set_hh_on(comp="Comp0(Soma)", t_on=0)
+sim.print_settings()
 sim.run_simulation()
 print("fin")
 

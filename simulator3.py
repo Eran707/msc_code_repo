@@ -42,6 +42,7 @@ class Simulator:
         self.num_comps = 0
         self.one_percent_t = 0
         self.interval_num = 1
+        self.intervals = 0
         self.steps = 0
         self.ED_on = True
         self.diff_constants = {}
@@ -58,7 +59,9 @@ class Simulator:
         self.xoflux_setup = True
         self.xo_start, self.cl_o_start, self.d_xoflux, self.xo_final, self.xo_flux, self.t_xoflux = 0, 0, 0, 0, 0, 0
         self.xoflux_points, self.dt_xoflux, self.xo_alpha, self.xo_beta = 0, 0, 0, 0
-        self.syn_dict = {}
+        self.sim_zflux_params = {"On": False}
+        self.sim_current_params = {"On": False}
+        self.syn_dict = {"On": False}
         self.hh_on = False
         self.hh_t_on = 0
         self.hh_comp_num = 0
@@ -93,7 +96,7 @@ class Simulator:
             soma = compartment.Compartment("Comp0(Soma)", radius=2 * rad, length=2 * len, static_sa=True,
                                            sa_value=2 * np.pi * (2 * rad) * (2 * len), hh_on=False)
             # soma.set_ion_properties(na_i=0.013995241563512785, k_i=0.12286753014443351, cl_i=0.005171468255812758, x_i=0.15496634531836323)
-            soma.set_ion_properties(adjust_x =True)
+            soma.set_ion_properties()
             self.add_compartment(soma)
 
         for i in range(number_of_comps):
@@ -102,34 +105,6 @@ class Simulator:
             comp.set_ion_properties()
             self.add_compartment(comp)
 
-    def get_starting_df(self):
-        """
-        "Returns a pandas dataframe of the starting values for each compartment"
-        """
-
-        with h5py.File(self.file_name, mode='r') as hdf:
-
-            C = hdf.get('COMPARTMENTS')
-            C_group_arr = []
-            comp_names_arr = list(C.keys())
-            master_arr = []
-
-            ##### LOADING COMPARTMENT DATA
-            for e in range(len(comp_names_arr)):
-                C_group = C.get(comp_names_arr[e])
-                C_group_arr.append(C_group)
-                data_arr_2 = []
-                dataset = C_group.get('0')
-                data_arr = []
-                for d in range(len(list(dataset))):
-                    data_arr.append(dataset[d])
-                data_arr_2.append(data_arr)
-                master_arr.append(data_arr_2)
-
-        df_start_data = [master_arr[i][0][1:9] for i in range(len(comp_names_arr))]
-        df_start = pd.DataFrame(data=df_start_data, index=comp_names_arr)
-        df_start.columns = ['Radius', 'Length', 'Volume', 'Na_i', 'K_i', 'Cl_i', 'X_i', 'z_i']
-        return df_start
 
     def set_electrodiffusion_properties(self, ED_on: bool = True,
                                         diff_constant_dict=None):
@@ -185,7 +160,7 @@ class Simulator:
         Function which sets the impermeant anion average charge in a compartment
 
         @param comp: string, compartment name. "All" if all compartments are desired.
-        @param z float:, average charge of impermeant anion desired for compartment
+        @param z :, average charge of impermeant anion desired for compartment
         @param adjust_x: boolean, allows for the compartment to adjust IA concentration based on z value
                         to ensure volume remains constant
         """
@@ -252,7 +227,7 @@ class Simulator:
             timing.create_dataset("INTERVALS", data=intervals)
 
         self.total_steps = self.total_t / self.dt
-
+        self.intervals = intervals
         self.output_intervals = (0.001, 0.005, 0.01, 0.1, 0.25, 0.5, 0.75, 1)
         self.output_arr = [round(self.output_intervals[a] * self.total_steps, 0) for a in
                            range(len(self.output_intervals))]
@@ -278,13 +253,13 @@ class Simulator:
         @param flux_rate: float, MOLES (not concentration) per second flux should occur at
         @param z: float, average charge of added impermeant anions
         """
-        xflux_data_arr, xflux_names_arr = [], []  # array which will be sent to the HDF5 file
+        self.xflux_data_arr, self.xflux_names_arr = [], []  # array which will be sent to the HDF5 file
 
         for i in range(len(self.comp_arr)):
             if comps[0] == self.comp_arr[i].name:
-                xflux_data_arr.append(i)
+                self.xflux_data_arr.append(i)
 
-        xflux_data_arr.extend((flux_rate, z, start_t, end_t))
+        self.xflux_data_arr.extend((flux_rate, z, start_t, end_t))
 
         for i in range(len(comps)):
             for j in self.comp_arr:
@@ -295,13 +270,13 @@ class Simulator:
                     j.xflux_params["start_t"] = start_t
                     j.xflux_params["end_t"] = end_t
 
-        xflux_names_arr.append("X-FLUX-" + str(self.xflux_count))  # names of the xflux
+        self.xflux_names_arr.append("X-FLUX-" + str(self.xflux_count))  # names of the xflux
         self.xflux_count += 1
         with h5py.File(self.file_name, mode='a') as self.hdf:
             xflux_group = self.hdf.get("X-FLUX-SETTINGS")
-            xflux_group.create_dataset(name=xflux_names_arr[-1], data=xflux_data_arr)
+            xflux_group.create_dataset(name=self.xflux_names_arr[-1], data=self.xflux_data_arr)
 
-    def set_zflux(self, all_comps=False, comps=None, start_t=0, end_t=0, z_end=-1, adjust_x=False):
+    def set_zflux(self, all_comps=False, comps=None, start_t=0, end_t=0, z_end=-1,adjust_x=False):
         """
         function which changes the average charge of impermeant anions in a compartment
         @param all_comps: boolean, if true impermeant anion change occurs in all compartments
@@ -313,12 +288,16 @@ class Simulator:
             such that there is no volume change.
        """
 
+
         for i in range(len(comps)):
             for j in range(len(self.comp_arr)):
                 if comps[i] == self.comp_arr[j].name or all_comps:
                     self.comp_arr[j].zflux_switch = True
-                    self.comp_arr[j].zflux_params = {"start_t": start_t, "end_t": end_t, "z": z_end,
-                                                     "adjust_x": adjust_x}
+                    self.comp_arr[j].zflux_params = {"start_t": start_t, "end_t": end_t, "z": z_end,}
+                    self.comp_arr[j].adjust_x_bool = adjust_x
+                    self.sim_zflux_params = {"On": True, "Comp": self.comp_arr[j].name, "z_end": z_end,
+                                             "start_t": start_t, "end_t": end_t,
+                                             "adjust_X": adjust_x}
 
     def set_xoflux(self, start_t=0, end_t=50, xo_conc=1e-3, z=-0.85):
         """
@@ -358,6 +337,22 @@ class Simulator:
         else:
             return
 
+    def get_avg_osmo(self, excl_comp_name=''):
+        """
+        Determines the average osmolarity in all the compartments.
+        @param excl_comp_name: exclude a particular compartments from the calculation
+        - useful for calculating the average osmolarity when z is being fluxed in a particular compartment.
+
+        """
+        total_osmo = 0
+        counter = 0
+        for i in self.comp_arr:
+            if i.name != excl_comp_name:
+                total_osmo += i.osm_i
+                counter += 1
+        avg_osmo = total_osmo / counter
+        return avg_osmo
+
     def add_synapse(self, comp_name='', synapse_type='Inhibitory', start_t=0, duration=2 * 1e-3,
                     max_neurotransmitter=1e-3, synapse_conductance=1e-9):
         """
@@ -369,7 +364,7 @@ class Simulator:
         @param max_neurotransmitter: float,max neurotransmitter concentration in moles/liter
         @param synapse_conductance: float, conductance of the synapse channel in Siemens, default is 1nS
         """
-        self.syn_dict = {}
+        self.syn_dict["On"] = True
         comp_num = 0
         for i in range(len(self.comp_arr)):
             if comp_name == self.comp_arr[i].name:
@@ -413,15 +408,26 @@ class Simulator:
         @param frequency: float, Hz (pulses/second)
         @return:
         """
+
+        self.sim_current_params["On"] = True
+
         comp_num = 0
         for i in range(len(self.comp_arr)):
             if comp_name == self.comp_arr[i].name:
                 comp_num = i
+                self.sim_current_params["compartment"] = comp_num
 
         if current_type == "Inhibitory":
             self.current_type = 0
+            self.sim_current_params["current_type"] = "inhibitory"
         elif current_type == "Excitatory":
             self.current_type = 1
+            self.sim_current_params["current type"] = "inhibitory"
+
+        self.sim_current_params["start_t"] = start_t
+        self.sim_current_params["duration"] = duration
+        self.sim_current_params["current_A"] = current_A
+        self.sim_current_params["frequency"] = frequency
 
         self.pulse_start_t_arr = []
         self.pulse_end_t_arr = []
@@ -484,7 +490,12 @@ class Simulator:
                     # appending the electrodiffusion concentrations for each compartment
 
             for d in self.comp_arr:
-                d.update_volumes()  # updates of the volumes, arrays, and dataframe for each compartment
+                if d.adjust_x_bool:
+                    avg_osm = self.get_avg_osmo(d.name)
+                    d.update_volumes(avg_osm)
+                else:
+                    d.update_volumes()
+                    # updates of the volumes, arrays for each compartment
 
             for f in range(len(self.output_arr) - 1):
                 if self.steps == self.output_arr[f]:
@@ -534,3 +545,88 @@ class Simulator:
                     data_array = self.ed_arr[j].ed_change_arr
                     subgroup.create_dataset(name=str(self.steps), data=data_array)
 
+    def print_settings(self):
+        print("HDF5 File name:" + self.file_name)
+        print("==============================")
+        print("Dendrite Morphology")
+        print("==============================")
+        for i in self.comp_arr:
+            print(i.name + " Len(um): " + str(i.length*1e5) + " Rad(um): " + str(i.radius*1e5))
+        print("")
+        print("==============================")
+        print("General settings")
+        print("==============================")
+        print("ED on: " + str(self.ED_on))
+        print("Surface Area Constant: " + str(self.static_sa))
+        print("ATPase rate Constant: "+ str(self.static_atpase))
+        print("Total sim time(s):" + str(self.total_t))
+        print("Time step(s): "+ str(self.dt))
+        print("#Intervals recorded in file: " + str(self.intervals))
+        print("")
+        print("==============================")
+        print("[X]-flux settings")
+        print("==============================")
+        if self.xflux_count == 0:
+            print("No [X]-flux")
+        else:
+            for i in range(len(self.xflux_names_arr)):
+                print(self.xflux_names_arr[i])
+                print("Flux rate: " + self.xflux_data_arr[1])
+                print("z: " + self.xflux_data_arr[2])
+                print("Start time: " + self.xflux_data_arr[3])
+                print("End time: " + self.xflux_data_arr[4])
+        print("")
+        print("==============================")
+        print("z-flux settings")
+        print("==============================")
+        if not self.sim_zflux_params["On"]:
+            print("No z-flux")
+        else:
+            print(self.sim_zflux_params["Comp"])
+            print("z end: " + str(self.sim_zflux_params["z_end"]))
+            print("Start time: " + str(self.sim_zflux_params["start_t"]))
+            print("End time: " + str(self.sim_zflux_params["end_t"]))
+            print("Adjust x: " + str(self.sim_zflux_params["adjust_X"]))
+
+        print("")
+        print("==============================")
+        print("Current settings")
+        print("==============================")
+        if self.sim_current_params["On"] == False:
+            print("No external current added")
+        else:
+            print("Current onto: " + self.comp_arr[self.sim_current_params["compartment"].name])
+            print("Current type: " + self.sim_current_params["current_type"])
+            print("Start time: " + str(self.sim_current_params["start_t"]))
+            print("Duration: " + str(self.sim_current_params["duration"]))
+            print("Current Amplitude (A): " + str(self.sim_current_params["current_A"]))
+            print("Current Frequency (Hz): " + str(self.sim_current_params["frequency"]) )
+
+        print("")
+        print("==============================")
+        print("Synapse settings")
+        print("==============================")
+        if not self.syn_dict["On"]:
+            print("No synapses added")
+        else:
+            print("Synapse on:" + self.comp_arr[self.syn_dict["compartment"]].name)
+            if self.syn_dict["synapse_type"] ==0:
+                print("Synapse type: Excitatory")
+            else:
+                print("Synapse type: Inhibitory")
+            print("alpha rate constant: " + str(self.syn_dict["alpha"]))
+            print("beta rate constant: "+ str(self.syn_dict["beta"]))
+            print("start_t: " + str(self.syn_dict["start_t"]))
+            print("end_t: " + str(self.syn_dict["end_t"]))
+            print("max [NT](M) :" + str(self.syn_dict["max_neurotransmitter_conc"]))
+            print("synaptic conductance: " + str(self.syn_dict["synapse_conductance"]))
+        print("")
+        print("==============================")
+        print("HH settings")
+        print("==============================")
+        if not self.hh_on:
+            print("No HH channels ")
+        else:
+            print("HH channels enabled")
+        print("")
+        print("===============================")
