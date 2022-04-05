@@ -104,9 +104,13 @@ class Compartment:
 
         self.dt, self.syn_t_on, self.syn_t_off = 0, 0, 0  # Timing
 
-    def set_ion_properties(self, na_i=14e-3, k_i=122.9e-3, cl_i=5.2e-3,
-                           x_i=154.9e-3, z_i=-0.85,
-                           osmol_neutral_start=True):
+    def set_ion_properties(self,
+                           na_i=0.013614929701933197,
+                           k_i=0.12323046997950128,
+                           cl_i=0.005161213856695764,
+                           x_i= 0.15499338647116973,
+                           z_i=-0.85,
+                           osmol_neutral_start=False):
         """
         - Adjustment of starting concentrations to ensure starting electroneutrality
        old defaults: na_i=14.001840415288e-3, k_i=122.870162657e-3, cl_i=5.1653366e-3,

@@ -9,12 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="463dabb2-c92a-4ec9-9ee6-971ec234e991" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_4b-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_4b-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Template view-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Template view-checkpoint.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Template view.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Template view.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/compartment.py" beforeDir="false" afterPath="$PROJECT_DIR$/compartment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller_from_hdf.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller_from_hdf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator3.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulator3.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -248,7 +245,7 @@
       <workItem from="1630690897332" duration="1210000" />
       <workItem from="1630754106323" duration="3763000" />
       <workItem from="1630858324585" duration="1578000" />
-      <workItem from="1649129155876" duration="12531000" />
+      <workItem from="1649129155876" duration="14213000" />
     </task>
     <servers />
   </component>
