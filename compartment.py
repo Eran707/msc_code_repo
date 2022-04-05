@@ -75,7 +75,7 @@ class Compartment:
 
         self.x_default = 154.962e-3
         self.z_default = -0.85
-
+        self.bool_adjust_x = False
         self.xflux_setup, self.zflux_setup, self.external_xflux_setup = True, True, True
         self.xflux_switch, self.zflux_switch = False, False
         self.xflux, self.xoflux = 0, 0
@@ -86,7 +86,6 @@ class Compartment:
         self.dt_xflux, self.flux_points, self.alpha, self.beta = 0, 0, 0, 0
         self.d_xflux, self.d_zflux, self.total_x_flux, self.static_xflux, self.x_final = 0, 0, 0, 0, 0
         self.osmo_final = 0
-        self.fixed_osm = False
         self.z_diff, self.z_final, self.z_diff, self.z_inc, self.zflux = 0, 0, 0, 0, 0
         self.synapse_on = False
         self.current_on = False
@@ -107,7 +106,7 @@ class Compartment:
 
     def set_ion_properties(self, na_i=14e-3, k_i=122.9e-3, cl_i=5.2e-3,
                            x_i=154.9e-3, z_i=-0.85,
-                           osmol_neutral_start=True,fixed_osm=False):
+                           osmol_neutral_start=True):
         """
         - Adjustment of starting concentrations to ensure starting electroneutrality
        old defaults: na_i=14.001840415288e-3, k_i=122.870162657e-3, cl_i=5.1653366e-3,
@@ -121,8 +120,6 @@ class Compartment:
         self.x_o = 29.5e-3
         self.osm_o = self.na_o + self.k_o + self.cl_o + self.x_o
         self.osm_initial = self.na_i + self.k_i + self.cl_i + self.x_i
-        if fixed_osm:
-            self.fixed_osm = True
 
         if osmol_neutral_start:
             self.k_i = self.cl_i - self.z_i * self.x_i - self.na_i
@@ -261,11 +258,8 @@ class Compartment:
         """ Calculates the new compartment volume (dm3)
         Elongation should occur radially
         """
-        if self.fixed_osm:
-            self.osm_i = self.osm_initial
-            self.x_i = self.osm_i - self.na_i - self.k_i-self.cl_i
-        else:
-            self.osm_i = self.na_i + self.k_i + self.cl_i + self.x_i
+
+        self.osm_i = self.na_i + self.k_i + self.cl_i + self.x_i
 
         self.dw = self.dt * (vw * pw * self.sa * (self.osm_i - self.osm_o))
         self.w2 = self.w + self.dw
@@ -342,9 +336,11 @@ class Compartment:
             t_diff = (self.zflux_params["end_t"] - self.zflux_params["start_t"]) / self.dt
             self.z_inc = self.z_diff / t_diff
             self.zflux_setup = False
-            self.fixed_osm = self.zflux_params["fixed_osm"]
+            self.bool_adjust_x = self.zflux_params["adjust_x"]
         else:
             self.z_i += self.z_inc
+            if self.bool_adjust_x:
+                self.adjust_x()
 
 
     def adjust_x(self):

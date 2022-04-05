@@ -10,7 +10,7 @@ file_name = "T11_noHH"
 sim = simulator3.Simulator(file_name)
 
 sim.add_default_multicompartment(number_of_comps=9, rad=0.5e-5, len=20e-5, soma=True)
-sim.set_z("Comp0(Soma)", z=-0.65, fixed_osm=True)
+sim.set_z("Comp0(Soma)", z=-0.65, adjust_x=True)
 # 2) SET SIMULATION SETTINGS
 
 sim.set_electrodiffusion_properties(ED_on=True, diff_constant_dict={"na": (1.33 / 2) * 1e-7, "k": (1.96 / 2) * 1e-7,
@@ -18,7 +18,7 @@ sim.set_electrodiffusion_properties(ED_on=True, diff_constant_dict={"na": (1.33 
 sim.set_external_ion_properties()
 sim.set_atpase_static(static_atpase=True)
 sim.set_sa_static(static_sa=True)
-#sim.set_zflux(comps=["Comp0(Soma)"], start_t=1, end_t=2, z_end=-0.65, fixed_osm=True)
+#sim.set_zflux(comps=["Comp0(Soma)"], start_t=1, end_t=2, z_end=-0.65, adjust_x = True)
 total_t = 100
 time_step = 1e-6
 sim.set_timing(total_t=total_t, time_step=time_step, intervals=1000)

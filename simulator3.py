@@ -93,7 +93,7 @@ class Simulator:
             soma = compartment.Compartment("Comp0(Soma)", radius=2 * rad, length=2 * len, static_sa=True,
                                            sa_value=2 * np.pi * (2 * rad) * (2 * len), hh_on=False)
             # soma.set_ion_properties(na_i=0.013995241563512785, k_i=0.12286753014443351, cl_i=0.005171468255812758, x_i=0.15496634531836323)
-            soma.set_ion_properties(fixed_osm=True)
+            soma.set_ion_properties(adjust_x =True)
             self.add_compartment(soma)
 
         for i in range(number_of_comps):
@@ -180,29 +180,28 @@ class Simulator:
         self.x_o = -1 * (self.cl_o - self.na_o - self.k_o)
         self.osm_o = self.x_o + self.na_o + self.cl_o + self.k_o
 
-    def set_z(self, comp="Comp8", z=-0.85, fixed_osm=False):
+    def set_z(self, comp="Comp8", z=-0.85, adjust_x=False):
         """
         Function which sets the impermeant anion average charge in a compartment
 
         @param comp: string, compartment name. "All" if all compartments are desired.
         @param z float:, average charge of impermeant anion desired for compartment
-        @param fixed_osm: boolean, allows for the compartment to have a fixed osmolarity.
-            this will adjust impermeant anion concentration such that compartment volume is not affected
-            by the impermeant anion charge change.
+        @param adjust_x: boolean, allows for the compartment to adjust IA concentration based on z value
+                        to ensure volume remains constant
         """
         if comp == "All":
             for i in range(len(self.comp_arr)):
                 self.comp_arr[i].z_i = z
                 self.comp_arr[i].set_osmo_neutral_start()
-                if fixed_osm:
-                    self.comp_arr[i].fixed_osmol = True
+                if adjust_x:
+                    self.comp_arr[i].bool_adjust_x = True
         else:
             for i in range(len(self.comp_arr)):
                 if comp == self.comp_arr[i].name:
                     self.comp_arr[i].z_i = z
                     self.comp_arr[i].set_osmo_neutral_start()
-                    if fixed_osm:
-                        self.comp_arr[i].fixed_osm = True
+                    if adjust_x:
+                        self.comp_arr[i].bool_adjust_x = True
 
     def set_atpase_static(self, static_atpase=True):
         """
@@ -302,7 +301,7 @@ class Simulator:
             xflux_group = self.hdf.get("X-FLUX-SETTINGS")
             xflux_group.create_dataset(name=xflux_names_arr[-1], data=xflux_data_arr)
 
-    def set_zflux(self, all_comps=False, comps=None, start_t=0, end_t=0, z_end=-1, fixed_osm=False):
+    def set_zflux(self, all_comps=False, comps=None, start_t=0, end_t=0, z_end=-1, adjust_x=False):
         """
         function which changes the average charge of impermeant anions in a compartment
         @param all_comps: boolean, if true impermeant anion change occurs in all compartments
@@ -310,7 +309,7 @@ class Simulator:
             if all compartments is true this can be left out.
         @param start_t: float, time to start charge flux in seconds
         @param end_t: float, time to end charge flux in seconds
-        @param fixed_osm: boolean, if true changes the impermeant anion concentration of the compartment
+        @param adjust_x: boolean, if true changes the impermeant anion concentration of the compartment
             such that there is no volume change.
        """
 
@@ -319,7 +318,7 @@ class Simulator:
                 if comps[i] == self.comp_arr[j].name or all_comps:
                     self.comp_arr[j].zflux_switch = True
                     self.comp_arr[j].zflux_params = {"start_t": start_t, "end_t": end_t, "z": z_end,
-                                                     "fixed_osm": fixed_osm}
+                                                     "adjust_x": adjust_x}
 
     def set_xoflux(self, start_t=0, end_t=50, xo_conc=1e-3, z=-0.85):
         """

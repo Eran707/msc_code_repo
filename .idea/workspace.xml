@@ -7,7 +7,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="463dabb2-c92a-4ec9-9ee6-971ec234e991" name="Default Changelist" comment="" />
+    <list default="true" id="463dabb2-c92a-4ec9-9ee6-971ec234e991" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/Multicompartment Trials.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Multicompartment Trials.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_4_adjust for volume testing.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_4_adjust for volume testing.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compartment.py" beforeDir="false" afterPath="$PROJECT_DIR$/compartment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller_from_hdf.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller_from_hdf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simulator3.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulator3.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,7 +46,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -58,9 +68,9 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="ignore.virus.scanning.warn.message" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Kira Code/model-of-neuronal-chloride-homeostasis-master/multi-compartment_multi-anion-8161bb361e3706f5dc72a1de7fea8444c6283c6a/diffusion.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="aDefault" />
-    <property name="settings.editor.selected.configurable" value="PyConsoleConfigurable.Python Console" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -217,6 +227,7 @@
       <workItem from="1630690897332" duration="1210000" />
       <workItem from="1630754106323" duration="3763000" />
       <workItem from="1630858324585" duration="1578000" />
+      <workItem from="1649129155876" duration="1552000" />
     </task>
     <servers />
   </component>
@@ -234,6 +245,11 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

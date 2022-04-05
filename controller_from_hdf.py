@@ -62,16 +62,16 @@ sim.set_electrodiffusion_properties(ED_on=True, diff_constant_dict={"na": (1.33 
 sim.set_external_ion_properties()
 sim.set_atpase_static(static_atpase=True)
 sim.set_sa_static(static_sa=True)
-#sim.set_z(comp="Comp8", z=-0.65, fixed_osm=True)
+#sim.set_z(comp="Comp8", z=-0.65, adjust_x=True)
 #sim.set_hh_on("Comp0(Soma)", t_on=1e-3)
 total_t = 500
 time_step = 1e-6
 sim.set_timing(total_t=total_t, time_step=time_step, intervals=5000)
-sim.set_zflux(comps=["Comp8"], start_t=100, end_t=150, z_end=-0.65, fixed_osm=False)
+sim.set_zflux(comps=["Comp8"], start_t=100, end_t=150, z_end=-0.65, adjust_x=True)
 #sim.add_synapse("Comp8", "Excitatory", start_t=50e-3, duration=1e-3, max_neurotransmitter=4e-3, synapse_conductance=4e-9)
 #sim.add_synapse("Comp4", "Inhibitory", start_t=52e-3, duration=1e-3, max_neurotransmitter=4e-3, synapse_conductance=4e-9)
 #sim.add_current("Comp9", current_type="Excitatory", start_t=1e-3, duration=1e-3, current_A=0.1e-9, dt=time_step)
-#sim.set_zflux(comps=["Comp8"], start_t=10, end_t=40, z_end=-1.05, fixed_osm=True)
+#sim.set_zflux(comps=["Comp8"], start_t=10, end_t=40, z_end=-1.05, adjust_x=True)
 
 # sim.set_xflux(comps=["Comp8"], start_t=20, end_t=40, flux_rate=3e-16)
 # sim.add_current("Comp9", current_type="Excitatory", start_t=120e-3, duration=1e-3, current_A=0.1e-9, dt=time_step)
