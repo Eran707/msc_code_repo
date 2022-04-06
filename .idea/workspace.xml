@@ -9,7 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="463dabb2-c92a-4ec9-9ee6-971ec234e991" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_1_Xchange-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_1_Xchange-checkpoint.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Figure_1_Xchange.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_1_Xchange.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_3_doubleZ.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_3_doubleZ.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -244,7 +246,7 @@
       <workItem from="1630754106323" duration="3763000" />
       <workItem from="1630858324585" duration="1578000" />
       <workItem from="1649129155876" duration="15064000" />
-      <workItem from="1649160696845" duration="3066000" />
+      <workItem from="1649160696845" duration="5083000" />
     </task>
     <servers />
   </component>
