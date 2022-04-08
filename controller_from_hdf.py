@@ -9,8 +9,8 @@ import h5py
 
 # Base file is the original file where the simulation was run
 
-base_file_name = "T1_v2"
-new_file_name = "adjustx_test"
+base_file_name = "T6_noHH"
+new_file_name = "test"
 
 comp_arr = []
 with h5py.File(base_file_name, mode='r') as hdf:
@@ -66,8 +66,8 @@ sim.set_sa_static(static_sa=True)
 #sim.set_hh_on("Comp0(Soma)", t_on=1e-3)
 total_t = 1
 time_step = 1e-6
-sim.set_timing(total_t=total_t, time_step=time_step, intervals=5000)
-sim.set_zflux(comps=["Comp8"], start_t=100e-3, end_t=200e-3, z_end=-0.65, adjust_x=True)
+sim.set_timing(total_t=total_t, time_step=time_step, intervals=1000)
+#sim.set_zflux(comps=["Comp8"], start_t=100e-3, end_t=200e-3, z_end=-0.65, adjust_x=True)
 #sim.add_synapse("Comp8", "Excitatory", start_t=50e-3, duration=1e-3, max_neurotransmitter=4e-3, synapse_conductance=4e-9)
 #sim.add_synapse("Comp4", "Inhibitory", start_t=52e-3, duration=1e-3, max_neurotransmitter=4e-3, synapse_conductance=4e-9)
 #sim.add_current("Comp9", current_type="Excitatory", start_t=1e-3, duration=1e-3, current_A=0.1e-9, dt=time_step)
@@ -75,6 +75,6 @@ sim.set_zflux(comps=["Comp8"], start_t=100e-3, end_t=200e-3, z_end=-0.65, adjust
 
 # sim.set_xflux(comps=["Comp8"], start_t=20, end_t=40, flux_rate=3e-16)
 # sim.add_current("Comp9", current_type="Excitatory", start_t=120e-3, duration=1e-3, current_A=0.1e-9, dt=time_step)
-sim.print_settings(base_file_name)
+sim.write_settings_to_file(base_file_name)
 sim.run_simulation()
 print("fin")
