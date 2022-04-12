@@ -105,16 +105,23 @@ class Compartment:
         self.dt, self.syn_t_on, self.syn_t_off = 0, 0, 0  # Timing
 
     def set_ion_properties(self,
-                           na_i=0.013614929701933197,
-                           k_i=0.12323046997950128,
-                           cl_i=0.005161213856695764,
-                           x_i= 0.15499338647116973,
+                           na_i=0.014,
+                           k_i=0.1229,
+                           cl_i=0.0052,
+                           x_i= 0.1549,
                            z_i=-0.85,
                            osmol_neutral_start=False):
         """
         - Adjustment of starting concentrations to ensure starting electroneutrality
        old defaults: na_i=14.001840415288e-3, k_i=122.870162657e-3, cl_i=5.1653366e-3,
                            x_i=154.972660318083e-3, z_i=-0.85
+
+                            na_i=0.013614929701933197,
+                           k_i=0.12323046997950128,
+                           cl_i=0.005161213856695764,
+                           x_i= 0.15499338647116973,
+                           z_i=-0.85,
+                           osmol_neutral_start=False)
         """
         self.na_i, self.k_i, self.cl_i, self.x_i, self.z_i = na_i, k_i, cl_i, x_i, z_i  # Intracellular ion conc.
         self.na_i_start, self.x_start, self.z_start = na_i, x_i, z_i

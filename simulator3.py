@@ -96,14 +96,15 @@ class Simulator:
             soma = compartment.Compartment("Comp0(Soma)", radius=2 * rad, length=2 * len, static_sa=True,
                                            sa_value=2 * np.pi * (2 * rad) * (2 * len), hh_on=False)
             # soma.set_ion_properties(na_i=0.013995241563512785, k_i=0.12286753014443351, cl_i=0.005171468255812758, x_i=0.15496634531836323)
-            soma.set_ion_properties(osmol_neutral_start=True)
+            soma.set_ion_properties()
             self.add_compartment(soma)
 
         for i in range(number_of_comps):
             comp = compartment.Compartment("Comp" + str(i + 1), radius=rad, length=len, static_sa=True,
                                            sa_value=2 * np.pi * rad * len, hh_on=False)
-            comp.set_ion_properties(osmol_neutral_start=True)
+            comp.set_ion_properties()
             self.add_compartment(comp)
+
 
     def set_electrodiffusion_properties(self, ED_on: bool = True,
                                         diff_constant_dict=None):
@@ -275,7 +276,7 @@ class Simulator:
             xflux_group = self.hdf.get("X-FLUX-SETTINGS")
             xflux_group.create_dataset(name=self.xflux_names_arr[-1], data=self.xflux_data_arr)
 
-    def set_zflux(self, all_comps=False, comps=None, start_t=0, end_t=0, z_end=-1, adjust_x=False):
+    def set_zflux(self, all_comps=False, comps=None, start_t=0, end_t=0, z_end=-1,adjust_x=False):
         """
         function which changes the average charge of impermeant anions in a compartment
         @param all_comps: boolean, if true impermeant anion change occurs in all compartments
@@ -287,11 +288,12 @@ class Simulator:
             such that there is no volume change.
        """
 
+
         for i in range(len(comps)):
             for j in range(len(self.comp_arr)):
                 if comps[i] == self.comp_arr[j].name or all_comps:
                     self.comp_arr[j].zflux_switch = True
-                    self.comp_arr[j].zflux_params = {"start_t": start_t, "end_t": end_t, "z": z_end, }
+                    self.comp_arr[j].zflux_params = {"start_t": start_t, "end_t": end_t, "z": z_end,}
                     self.comp_arr[j].adjust_x_bool = adjust_x
                     self.sim_zflux_params = {"On": True, "Comp": self.comp_arr[j].name, "z_end": z_end,
                                              "start_t": start_t, "end_t": end_t,
@@ -543,178 +545,87 @@ class Simulator:
                     data_array = self.ed_arr[j].ed_change_arr
                     subgroup.create_dataset(name=str(self.steps), data=data_array)
 
-    def write_settings_to_file(self, basefile_name=""):
-
-        settings_file_name = self.file_name + "_settings"
-        f = open(settings_file_name, "w")
-        f.write("SETTINGS")
-        f.write("\n")
-        f.write("=============================")
-        f.write("\n")
-        if basefile_name != "":
-            f.write("HDF5 Base File (Template) " + basefile_name)
-            f.write("\n")
+    def print_settings(self,basefile_name=""):
+        if basefile_name !="":
+            print("HDF5 Base File (Template) " + basefile_name)
         else:
-            f.write("No Base/Template)")
-            f.write("\n")
-        f.write("HDF5 File name:" + self.file_name)
-        f.write("\n")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
-        f.write("Dendrite Morphology")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
+            print("Original file (No Base/Template)")
+        print("HDF5 File name:" + self.file_name)
+        print("==============================")
+        print("Dendrite Morphology")
+        print("==============================")
         for i in self.comp_arr:
-            f.write(i.name + " Len(um): " + str(i.length * 1e5) + " Rad(um): " + str(i.radius * 1e5))
-            f.write("\n")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
-        f.write("General settings")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
-        f.write("ED on: " + str(self.ED_on))
-        f.write("\n")
-        f.write("Surface Area Constant: " + str(self.static_sa))
-        f.write("\n")
-        f.write("ATPase rate Constant: " + str(self.static_atpase))
-        f.write("\n")
-        f.write("Total sim time(s):" + str(self.total_t))
-        f.write("\n")
-        f.write("Time step(s): " + str(self.dt))
-        f.write("\n")
-        f.write("#Intervals recorded in file: " + str(self.intervals))
-        f.write("\n")
-        f.write("Starting [Na]: " + str(self.comp_arr[1].na_i * 1e3))
-        f.write("\n")
-        f.write("Starting [K]: " + str(self.comp_arr[1].k_i * 1e3))
-        f.write("\n")
-        f.write("Starting [Cl]: " + str(self.comp_arr[1].cl_i * 1e3))
-        f.write("\n")
-        f.write("Starting [X]: " + str(self.comp_arr[1].x_i * 1e3))
-        f.write("\n")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
-        f.write("[X]-flux settings")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
+            print(i.name + " Len(um): " + str(i.length*1e5) + " Rad(um): " + str(i.radius*1e5))
+        print("==============================")
+        print("General settings")
+        print("==============================")
+        print("ED on: " + str(self.ED_on))
+        print("Surface Area Constant: " + str(self.static_sa))
+        print("ATPase rate Constant: "+ str(self.static_atpase))
+        print("Total sim time(s):" + str(self.total_t))
+        print("Time step(s): "+ str(self.dt))
+        print("#Intervals recorded in file: " + str(self.intervals))
+        print("Starting [Na]: " + str(self.comp_arr[1].na_i*1e3))
+        print("Starting [K]: " + str(self.comp_arr[1].k_i * 1e3))
+        print("Starting [Cl]: " + str(self.comp_arr[1].cl_i * 1e3))
+        print("Starting [X]: " + str(self.comp_arr[1].x_i * 1e3))
+        print("==============================")
+        print("[X]-flux settings")
+        print("==============================")
         if self.xflux_count == 0:
-            f.write("No [X]-flux")
-            f.write("\n")
-            f.write("\n")
+            print("No [X]-flux")
         else:
             for i in range(len(self.xflux_names_arr)):
-                f.write(self.xflux_names_arr[i])
-                f.write("\n")
-                f.write("Flux rate: " + self.xflux_data_arr[1])
-                f.write("\n")
-                f.write("z: " + self.xflux_data_arr[2])
-                f.write("\n")
-                f.write("Start time: " + self.xflux_data_arr[3])
-                f.write("\n")
-                f.write("End time: " + self.xflux_data_arr[4])
-                f.write("\n")
-                f.write("\n")
-        f.write("==============================")
-        f.write("\n")
-        f.write("z-flux settings")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
+                print(self.xflux_names_arr[i])
+                print("Flux rate: " + self.xflux_data_arr[1])
+                print("z: " + self.xflux_data_arr[2])
+                print("Start time: " + self.xflux_data_arr[3])
+                print("End time: " + self.xflux_data_arr[4])
+        print("==============================")
+        print("z-flux settings")
+        print("==============================")
         if not self.sim_zflux_params["On"]:
-            f.write("No z-flux")
-            f.write("\n")
-            f.write("\n")
+            print("No z-flux")
         else:
-            f.write(self.sim_zflux_params["Comp"])
-            f.write("\n")
-            f.write("z end: " + str(self.sim_zflux_params["z_end"]))
-            f.write("\n")
-            f.write("Start time: " + str(self.sim_zflux_params["start_t"]))
-            f.write("\n")
-            f.write("End time: " + str(self.sim_zflux_params["end_t"]))
-            f.write("\n")
-            f.write("Adjust x: " + str(self.sim_zflux_params["adjust_X"]))
-            f.write("\n")
-            f.write("\n")
-        f.write("==============================")
-        f.write("\n")
-        f.write("Current settings")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
-        if not self.sim_current_params["On"]:
-            f.write("No external current added")
-            f.write("\n")
-            
+            print(self.sim_zflux_params["Comp"])
+            print("z end: " + str(self.sim_zflux_params["z_end"]))
+            print("Start time: " + str(self.sim_zflux_params["start_t"]))
+            print("End time: " + str(self.sim_zflux_params["end_t"]))
+            print("Adjust x: " + str(self.sim_zflux_params["adjust_X"]))
+        print("==============================")
+        print("Current settings")
+        print("==============================")
+        if self.sim_current_params["On"] == False:
+            print("No external current added")
         else:
-            f.write("Current onto: " + self.comp_arr[self.sim_current_params["compartment"].name])
-            f.write("\n")
-            f.write("Current type: " + self.sim_current_params["current_type"])
-            f.write("\n")
-            f.write("Start time: " + str(self.sim_current_params["start_t"]))
-            f.write("\n")
-            f.write("Duration: " + str(self.sim_current_params["duration"]))
-            f.write("\n")
-            f.write("Current Amplitude (A): " + str(self.sim_current_params["current_A"]))
-            f.write("\n")
-            f.write("Current Frequency (Hz): " + str(self.sim_current_params["frequency"]))
-        f.write("\n")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
-        f.write("Synapse settings")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
+            print("Current onto: " + self.comp_arr[self.sim_current_params["compartment"].name])
+            print("Current type: " + self.sim_current_params["current_type"])
+            print("Start time: " + str(self.sim_current_params["start_t"]))
+            print("Duration: " + str(self.sim_current_params["duration"]))
+            print("Current Amplitude (A): " + str(self.sim_current_params["current_A"]))
+            print("Current Frequency (Hz): " + str(self.sim_current_params["frequency"]) )
+        print("==============================")
+        print("Synapse settings")
+        print("==============================")
         if not self.syn_dict["On"]:
-            f.write("\n")
-            f.write("No synapses added")
-            f.write("\n")
+            print("No synapses added")
         else:
-            f.write("\n")
-            f.write("Synapse on:" + self.comp_arr[self.syn_dict["compartment"]].name)
-            f.write("\n")
-            if self.syn_dict["synapse_type"] == 0:
-                f.write("\n")
-                f.write("Synapse type: Excitatory")
+            print("Synapse on:" + self.comp_arr[self.syn_dict["compartment"]].name)
+            if self.syn_dict["synapse_type"] ==0:
+                print("Synapse type: Excitatory")
             else:
-                f.write("\n")
-                f.write("Synapse type: Inhibitory")
-            f.write("\n")
-            f.write("alpha rate constant: " + str(self.syn_dict["alpha"]))
-            f.write("\n")
-            f.write("beta rate constant: " + str(self.syn_dict["beta"]))
-            f.write("\n")
-            f.write("start_t: " + str(self.syn_dict["start_t"]))
-            f.write("\n")
-            f.write("end_t: " + str(self.syn_dict["end_t"]))
-            f.write("\n")
-            f.write("max [NT](M) :" + str(self.syn_dict["max_neurotransmitter_conc"]))
-            f.write("\n")
-            f.write("synaptic conductance: " + str(self.syn_dict["synapse_conductance"]))
-            f.write("\n")
-        f.write("\n")
-        f.write("==============================")
-        f.write("\n")
-        f.write("HH settings")
-        f.write("\n")
-        f.write("==============================")
+                print("Synapse type: Inhibitory")
+            print("alpha rate constant: " + str(self.syn_dict["alpha"]))
+            print("beta rate constant: "+ str(self.syn_dict["beta"]))
+            print("start_t: " + str(self.syn_dict["start_t"]))
+            print("end_t: " + str(self.syn_dict["end_t"]))
+            print("max [NT](M) :" + str(self.syn_dict["max_neurotransmitter_conc"]))
+            print("synaptic conductance: " + str(self.syn_dict["synapse_conductance"]))
+        print("==============================")
+        print("HH settings")
+        print("==============================")
         if not self.hh_on:
-            f.write("\n")
-            f.write("No HH channels ")
-            f.write("\n")
+            print("No HH channels ")
         else:
-            f.write("\n")
-            f.write("HH channels enabled")
-            f.write("\n")
-        f.write("\n")
-        f.write("===============================")
-
-        f.close()
-        print(settings_file_name + " created")
+            print("HH channels enabled")
+        print("===============================")
