@@ -64,7 +64,7 @@ sim.set_atpase_static(static_atpase=True)
 sim.set_sa_static(static_sa=True)
 #sim.set_z(comp="Comp8", z=-0.65, adjust_x=True)
 #sim.set_hh_on("Comp0(Soma)", t_on=1e-3)
-total_t = 1
+total_t = 5
 time_step = 1e-6
 sim.set_timing(total_t=total_t, time_step=time_step, intervals=5000)
 sim.set_zflux(comps=["Comp8"], start_t=100e-3, end_t=200e-3, z_end=-0.65, adjust_x=True)
