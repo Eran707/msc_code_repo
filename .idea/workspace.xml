@@ -8,13 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="463dabb2-c92a-4ec9-9ee6-971ec234e991" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/simulator_from_hdf.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Figure_1_Xchange.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_1_Xchange.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Figure_2_Zchange.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_2_Zchange.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Figure_3_multiZ.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_3_multiZ.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Template view.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Template view.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator3.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulator3.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +66,7 @@
     <property name="ignore.virus.scanning.warn.message" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/controller.py" />
     <property name="run.code.analysis.last.selected.profile" value="aDefault" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Python" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -255,6 +250,7 @@
       <workItem from="1649160696845" duration="5083000" />
       <workItem from="1649919426570" duration="20345000" />
       <workItem from="1650098538047" duration="13988000" />
+      <workItem from="1650356958719" duration="2367000" />
     </task>
     <servers />
   </component>
