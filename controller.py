@@ -4,7 +4,7 @@ Main script to run simulation
 
 import simulator3
 
-file_name = "Exp3-2_v1"
+file_name = "Exp1_v2"
 
 # 1) DEFINE SIMULATOR CLASS AND ADD COMPARTMENTS
 sim = simulator3.Simulator(file_name)
@@ -18,13 +18,13 @@ sim.set_electrodiffusion_properties(ED_on=True, diff_constant_dict={"na": (1.33 
 sim.set_external_ion_properties()
 sim.set_atpase_static(static_atpase=True)
 sim.set_sa_static(static_sa=True)
-total_t = 150
+total_t = 300
 time_step = 1e-6
-sim.set_zflux(comps=["Comp8"], start_t=10, end_t=60, z_end=-0.65, adjust_x=False)
-
+# sim.set_zflux(comps=["Comp8"], start_t=30, end_t=90, z_end=-0.65, adjust_x=False)
+sim.set_xflux(comps='Comp8', start_t=70, end_t=100, flux_rate=3e-16 / 60, z=-0.85)
 sim.set_timing(total_t=total_t, time_step=time_step, intervals=10000)
 # sim.set_hh_on(comp="Comp0(Soma)", t_on=0)
-sim.print_settings()
+sim.write_settings_to_file()
 sim.run_simulation()
 print("fin")
 
