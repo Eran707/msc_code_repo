@@ -19,9 +19,14 @@ new_file_name = "extendTest1"
 amend_type = 'Extend'
 
 sim = simulator_from_hdf.SimulatorFromHDF(old_file_name, new_file_name, amend_type)
-sim.set_timing(extend_t=30)
+sim.set_timing(extend_t=2)
+sim.set_electrodiffusion_properties()
+sim.set_external_ion_properties()
+sim.set_static_sa()
+sim.set_atpase_static(static_atpase=True)
 
-#sim.run_simulation()
+sim.write_settings_to_file(old_file_name)
+sim.run_simulation()
 
 
 
