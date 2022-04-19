@@ -1,16 +1,32 @@
 """
-Version of the controller class to be able to start a simulation from where an HDF file started off
+Controller class interfaces with simulator_from_hdf to amend HDF simulation files
+A) "Extend" a previous simulation
+B) "Resume" a previous simulation
+C) "LastValues" starts a simulation based on the previous values
+
+Creator: EFS
+Revised: April 2022
 """
 import numpy as np
-
 import compartment
-import simulator3
+import simulator_from_hdf
 import h5py
+import common
+import electrodiffusion
 
-# Base file is the original file where the simulation was run
+old_file_name = "T1"
+new_file_name = "extendTest1"
+amend_type = 'Extend'
 
-base_file_name = "T1_v2"
-new_file_name = "adjustx_test"
+sim = simulator_from_hdf.SimulatorFromHDF(old_file_name, new_file_name, amend_type)
+sim.set_timing(extend_t=30)
+
+#sim.run_simulation()
+
+
+
+"""
+
 
 comp_arr = []
 with h5py.File(base_file_name, mode='r') as hdf:
@@ -78,3 +94,5 @@ sim.set_zflux(comps=["Comp8"], start_t=100e-3, end_t=200e-3, z_end=-0.65, adjust
 sim.print_settings(base_file_name)
 sim.run_simulation()
 print("fin")
+ 
+"""

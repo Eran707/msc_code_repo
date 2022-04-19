@@ -25,7 +25,7 @@ Date:  April 2022
 import compartment
 import common
 import h5py
-import numpy
+import numpy as np
 import electrodiffusion
 
 
@@ -52,6 +52,8 @@ class SimulatorFromHDF:
         self.na_o, self.k_o, self.cl_o, self.x_o, self.z_o, self.osm_o = 0, 0, 0, 0, 0, 0
         # Timing and interval initialization
         self.start_t, self.end_t, self.run_t, self.total_t, self.dt = 0, 0, 0, 0, 0
+        self.extend_t = 0
+        self.oldSim_timing_dict = {}
         self.one_percent_t, self.intervals, self.interval_num, self.steps = 0, 0, 1, 0
         # X-flux initialization
         self.xflux_setup, self.xflux_dict, self.xflux_count = True, {}, 0
@@ -64,29 +66,99 @@ class SimulatorFromHDF:
         # Hodgkin-Huxley initialization :
         self.hh_on, self.hh_comp_num, self.hh_t_on = False, 0, 0
 
-        self.amend_sim()
+        if self.amend_type == "Extend":
+            self._extend_sim()
+        elif self.amend_type == "Resume":
+            self._resume_sim()
+        elif self.amend_type == "LastValues":
+            self._last_values_sim()
 
-    def amend_sim(self):
+    def _extend_sim(self):
+
+        # Open old HDF file and copy all data into new file
+        with h5py.File(self.file_name, mode='w') as hdf_new:
+            try:
+                with h5py.File(self.old_file_name, mode='r') as hdf_old:
+                    groups = list(hdf_old.keys())
+                    for _ in groups:
+                        group = hdf_old.get(_)
+                        hdf_old.copy(group, hdf_new)
+                hdf_old.close()
+            except:
+                raise "could not open old file and copy data- check if it is in the current directory"
+
+        # Open new file - find timing settings
+        with h5py.File(self.file_name, mode='r') as hdf_new:
+
+            T = hdf_new.get('TIMING')
+            oldSim_total_t = T.get('TOTAL_T')[()]
+            oldSim_dt = T.get("DT")[()]
+            oldSim_intervals = T.get('INTERVALS')[()]
+            oldSim_total_steps = oldSim_total_t / oldSim_dt
+            oldSim_interval_step = oldSim_total_steps / oldSim_intervals
+            oldSim_interval_arr = [round(oldSim_interval_step * i) for i in range(oldSim_intervals)]
+
+            comps = hdf_new.get(groups[0])
+            comp_list = list(comps.keys())
+            # Use timing settings to find last interval and the interval steps
+            # only find the second last interval for the first compartment
+            comp = comps.get(comp_list[0])
+            comp_intervals_list = list(comp.keys())
+            oldSim_last_interval = oldSim_interval_arr[len(comp_intervals_list) - 2]
+
+            self.oldSim_timing_dict = {"total_t": oldSim_total_t, "dt": oldSim_dt, "intervals": oldSim_intervals,
+                                       "interval_step": oldSim_interval_step, "last_interval": oldSim_last_interval}
+            print(self.oldSim_timing_dict)
+
+            # find the last value for each compartment and initialize all compartments:
+
+            for _ in comp_list:
+                hdfcomp = comps.get(_)
+                dataset_last = list(hdfcomp.get(str(oldSim_last_interval)))
+                rad, length = dataset_last[1:3]
+                na, k, cl, x, z = dataset_last[4:9]
+                dataset_start = list(hdfcomp.get("0"))
+                rad_start = dataset_start[1]
+                sa_start = 2 * np.pi * rad_start * length
+                comp_name = _
+                comp = compartment.Compartment(compartment_name=comp_name, radius=rad, length=length,
+                                               sa_value=sa_start, static_sa=True)
+                comp.set_ion_properties(na_i=na, k_i=k, cl_i=cl, x_i=x, z_i=z, osmol_neutral_start=False)
+
+                self.comp_arr.append(comp)
+
+    def _resume_sim(self):
+        print('code not complete')
+
+    def _last_values_sim(self):
+        print('code not complete')
+
+    def add_compartment(self, comp=compartment.Compartment):
+        print('code not complete')
+
+    def set_timing(self, extend_t=30 ):
 
         if self.amend_type == "Extend":
-            # Open old HDF file
-            with h5py.File(self.file_name, mode='w') as hdf_new:
-                try:
-                    with h5py.File(self.old_file_name, mode='r') as hdf_old:
-                        groups = list(hdf_old.keys())
-                        for _ in groups:
-                            hdf_old.copy(_, hdf_new)
-                            hdf_old.close()
-                except:
-                    raise "could not open old file and copy data- check if it is in the current directory"
-
-            # Copy all the data into new file
+            self.extend_t = extend_t
+            self.dt = self.oldSim_timing_dict["dt"]
+            self.run_t = self.oldSim_timing_dict["last_interval"] * self.oldSim_timing_dict["dt"]
+            self.total_t = self.run_t + self.extend_t
+            self.total_steps = self.total_t/self.dt
+            self.intervals = round(self.total_steps/self.oldSim_timing_dict["interval_step"])
+            self.interval_arr = [i*self.oldSim_timing_dict["interval_step"] for i in range(self.intervals)]
 
 
 
 
+    def set_static_sa(self):
+        print('code not complete')
 
-        elif self.amend_type == "Resume":
+    def run_simulation(self):
+
+        while self.run_t < self.total_t:
+            self.run_t += self.dt
+
             print('code not complete')
-        elif self.amend_type == "LastValues":
-            print('code not complete')
+
+    def save_simulation_settings(self):
+        print('code not complete')
