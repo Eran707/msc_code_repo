@@ -14,13 +14,13 @@ import h5py
 import common
 import electrodiffusion
 
-old_file_name = "T1"
-new_file_name = "extendTest1"
+old_file_name = "Exp1-4"
+new_file_name = "Exp1-4_extended"
 amend_type = 'Extend'
 
 sim = simulator_from_hdf.SimulatorFromHDF(old_file_name, new_file_name, amend_type)
-sim.set_timing(extend_t=2)
-sim.set_electrodiffusion_properties()
+sim.set_timing(extend_t=50)
+sim.set_electrodiffusion_properties(ED_on=True)
 sim.set_external_ion_properties()
 sim.set_static_sa()
 sim.set_atpase_static(static_atpase=True)

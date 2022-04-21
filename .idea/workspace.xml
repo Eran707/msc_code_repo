@@ -8,10 +8,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="463dabb2-c92a-4ec9-9ee6-971ec234e991" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Template Extended-checkpoint.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Exp3-3_v2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Template Extended.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Template view-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Template view-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_1_Xchange.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_1_Xchange.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_2_Zchange.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_2_Zchange.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Template view.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Template view.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cl_line_graph.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/cl_line_graph.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cl_tm_heatmaps.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/cl_tm_heatmaps.jpeg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller_from_hdf.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller_from_hdf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/f2d_cl_boundary.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/f2d_cl_boundary.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/f2d_k_boundary.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/f2d_k_boundary.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/f2d_na_boundary.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/f2d_na_boundary.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k_line_graph.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/k_line_graph.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k_tm_heatmaps.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/k_tm_heatmaps.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/na_line_graph.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/na_line_graph.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/na_tm_heatmaps.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/na_tm_heatmaps.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simulator3.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulator3.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simulator_from_hdf.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulator_from_hdf.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -258,6 +272,7 @@
       <workItem from="1650098538047" duration="13988000" />
       <workItem from="1650356958719" duration="9309000" />
       <workItem from="1650377003186" duration="5451000" />
+      <workItem from="1650452221684" duration="8688000" />
     </task>
     <servers />
   </component>
@@ -303,6 +318,6 @@
     <SUITE FILE_PATH="coverage/Multicompartment_Trials$Sandbox.coverage" NAME="Sandbox Coverage Results" MODIFIED="1610872878802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/msc_code_repo$Controller.coverage" NAME="Controller Coverage Results" MODIFIED="1650188983877" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Multicompartment_Trials$Simulator.coverage" NAME="Controller Coverage Results" MODIFIED="1619517360404" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/msc_code_repo$Controller_from_HDF.coverage" NAME="Controller_from_HDF Coverage Results" MODIFIED="1650382950065" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/msc_code_repo$Controller_from_HDF.coverage" NAME="Controller_from_HDF Coverage Results" MODIFIED="1650472018749" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

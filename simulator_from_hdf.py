@@ -104,7 +104,7 @@ class SimulatorFromHDF:
             # only find the second last interval for the first compartment
             comp = comps.get(comp_list[0])
             comp_intervals_list = list(comp.keys())
-            oldSim_last_interval = len(comp_intervals_list) - 2
+            oldSim_last_interval = len(comp_intervals_list) -1
             oldSim_last_step = oldSim_interval_arr[oldSim_last_interval]
             self.oldSim_timing_dict = {"total_t": oldSim_total_t, "dt": oldSim_dt, "intervals": oldSim_intervals,
                                        "last_step": oldSim_last_step, "interval_step": oldSim_interval_step,
@@ -128,6 +128,8 @@ class SimulatorFromHDF:
                 comp.set_ion_properties(na_i=na, k_i=k, cl_i=cl, x_i=x, z_i=z, osmol_neutral_start=False)
 
                 self.comp_arr.append(comp)
+
+
 
     def _resume_sim(self):
         print('code not complete')
@@ -153,7 +155,7 @@ class SimulatorFromHDF:
         self.diff_constants = diff_constant_dict
 
         if self.ED_on:
-            for e in range(self.num_comps - 1):
+            for e in range(len(self.comp_arr) - 1):
                 name = self.comp_arr[e].name + ' -> ' + self.comp_arr[e + 1].name
 
                 ed = electrodiffusion.Electrodiffusion(comp_a_name=self.comp_arr[e].name,
@@ -172,10 +174,10 @@ class SimulatorFromHDF:
             self.run_t = self.oldSim_timing_dict["last_step"] * self.oldSim_timing_dict["dt"]
             self.total_t = self.run_t + self.extend_t
             self.total_steps = self.total_t / self.dt
-            self.start_step = self.run_t / self.dt
+            self.start_step = self.run_t / self.dt +1
             self.remaining_steps = self.total_steps - self.start_step
             self.intervals = round(self.total_steps / self.oldSim_timing_dict["interval_step"])
-            self.interval_arr = [i * self.oldSim_timing_dict["interval_step"] for i in range(self.intervals)]
+            self.interval_arr = [int(i * self.oldSim_timing_dict["interval_step"]) for i in range(self.intervals)]
             self.output_intervals = (0.001, 0.005, 0.01, 0.1, 0.25, 0.5, 0.75, 1)
             self.output_arr = [self.start_step+ (round(self.output_intervals[a] * self.remaining_steps, 0)) for a in
                                range(len(self.output_intervals))]
@@ -224,8 +226,8 @@ class SimulatorFromHDF:
     def run_simulation(self):
 
         self.start_t = time.time()
-        self.interval_num = self.oldSim_timing_dict["last_interval"]
-        self.steps = self.start_step
+        self.interval_num = self.oldSim_timing_dict["last_interval"] + 1
+        self.steps = int(self.start_step)
 
         while self.run_t < self.total_t:
 
@@ -317,8 +319,6 @@ class SimulatorFromHDF:
                     subgroup = group.get(self.ed_arr[j].name)
                     data_array = self.ed_arr[j].ed_change_arr
                     subgroup.create_dataset(name=str(self.steps), data=data_array)
-
-
 
 
 
