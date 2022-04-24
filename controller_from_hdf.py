@@ -14,8 +14,8 @@ import h5py
 import common
 import electrodiffusion
 
-old_file_name = "Exp1-4"
-new_file_name = "Exp1-4_extended"
+old_file_name = "Exp3-4_v2"
+new_file_name = "asd"
 amend_type = 'Extend'
 
 sim = simulator_from_hdf.SimulatorFromHDF(old_file_name, new_file_name, amend_type)

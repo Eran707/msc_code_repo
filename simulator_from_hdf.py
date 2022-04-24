@@ -132,7 +132,70 @@ class SimulatorFromHDF:
 
 
     def _resume_sim(self):
-        print('code not complete')
+
+        # Open old HDF file and copy all data into new file
+        with h5py.File(self.file_name, mode='w') as hdf_new:
+            try:
+                with h5py.File(self.old_file_name, mode='r') as hdf_old:
+                    groups = list(hdf_old.keys())
+                    for _ in groups:
+                        group = hdf_old.get(_)
+                        hdf_old.copy(group, hdf_new)
+                hdf_old.close()
+            except:
+                raise "could not open old file and copy data- check if it is in the current directory"
+
+        # Open new file - find timing settings
+        with h5py.File(self.file_name, mode='r') as hdf_new:
+
+            T = hdf_new.get('TIMING')
+            try:
+                oldSim_total_t = T.get('EXTENDED_TOTAL_T')[()]
+            except:
+                oldSim_total_t = T.get('TOTAL_T')[()]
+            try:
+                oldSim_dt = T.get("EXTENDED_DT")[()]
+            except:
+                oldSim_dt = T.get("DT")[()]
+            try:
+                oldSim_intervals = T.get('EXTENDED_INTERVALS')[()]
+            except:
+                oldSim_intervals = T.get('INTERVALS')[()]
+
+            oldSim_total_steps = round(oldSim_total_t / oldSim_dt)
+            oldSim_interval_step = round(oldSim_total_steps / oldSim_intervals)+1
+            oldSim_interval_arr = [round(oldSim_interval_step * i) for i in range(oldSim_intervals)]
+
+            comps = hdf_new.get(groups[0])
+            comp_list = list(comps.keys())
+            # Use timing settings to find last interval and the interval steps
+            # only find the second last interval for the first compartment
+            comp = comps.get(comp_list[-1])
+            comp_intervals_list = list(comp.keys())
+            oldSim_last_interval = len(comp_intervals_list) - 1
+            oldSim_last_step = round(oldSim_interval_arr[oldSim_last_interval])
+            self.oldSim_timing_dict = {"total_t": oldSim_total_t, "dt": oldSim_dt, "intervals": oldSim_intervals,
+                                       "last_step": oldSim_last_step, "interval_step": oldSim_interval_step,
+                                       "last_interval": oldSim_last_interval}
+            print(self.oldSim_timing_dict)
+
+            # find the last value for each compartment and initialize all compartments:
+
+            for _ in comp_list:
+                hdfcomp = comps.get(_)
+                dataset_last = list(hdfcomp.get(str(oldSim_last_step)))
+                rad, length = dataset_last[1:3]
+                na, k, cl, x, z = dataset_last[4:9]
+                dataset_start = list(hdfcomp.get("0"))
+                rad_start = dataset_start[1]
+                sa_start = 2 * np.pi * rad_start * length
+                self.na_start = dataset_start[4]
+                comp_name = _
+                comp = compartment.Compartment(compartment_name=comp_name, radius=rad, length=length,
+                                               sa_value=sa_start, static_sa=True)
+                comp.set_ion_properties(na_i=na, k_i=k, cl_i=cl, x_i=x, z_i=z, osmol_neutral_start=False)
+
+                self.comp_arr.append(comp)
 
     def _last_values_sim(self):
         print('code not complete')
@@ -188,6 +251,30 @@ class SimulatorFromHDF:
                 timing.create_dataset("EXTENDED_DT", data=self.dt)
                 timing.create_dataset("EXTENDED_TOTAL_T", data=self.total_t)
                 timing.create_dataset("EXTENDED_INTERVALS", data=self.intervals)
+                timing.create_dataset("EXTENDED_INTERVAL_STEP", data=self.oldSim_timing_dict["interval_step"])
+            for i in range(len(self.comp_arr)):
+                self.comp_arr[i].dt = self.dt
+
+        if self.amend_type == "Resume":
+            self.dt = self.oldSim_timing_dict["dt"]
+            self.run_t = self.oldSim_timing_dict["last_step"] * self.oldSim_timing_dict["dt"]
+            self.total_t = self.oldSim_timing_dict["total_t"]
+            self.total_steps = self.total_t / self.dt
+            self.start_step = self.run_t / self.dt +1
+            self.remaining_steps = self.total_steps - self.start_step
+            self.intervals = round(self.total_steps / self.oldSim_timing_dict["interval_step"])
+            self.interval_arr = [int(i * self.oldSim_timing_dict["interval_step"]) for i in range(self.intervals)]
+            self.output_intervals = (0.001, 0.005, 0.01, 0.1, 0.25, 0.5, 0.75, 1)
+            self.output_arr = [self.start_step+ (round(self.output_intervals[a] * self.remaining_steps, 0)) for a in
+                               range(len(self.output_intervals))]
+            self.output_arr = tuple(self.output_arr)
+
+            with h5py.File(self.file_name, mode='a') as self.hdf:
+                timing = self.hdf.get("TIMING")
+                timing.create_dataset("RESUME_T", data=self.run_t)
+
+            for i in range(len(self.comp_arr)):
+                self.comp_arr[i].dt = self.dt
 
     def set_external_ion_properties(self, na_o=145e-3, k_o=3.5e-3, cl_o=119e-3, x_o=29.5e-3, z_o=-0.85):
         """
