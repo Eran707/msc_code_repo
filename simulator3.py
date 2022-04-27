@@ -352,7 +352,7 @@ class Simulator:
         total_osmo = 0
         counter = 0
         for i in self.comp_arr:
-            if i.name != excl_comp_name:
+            if i.name != excl_comp_name and i.name != "Comp0(Soma)":
                 total_osmo += i.osm_i
                 counter += 1
         avg_osmo = total_osmo / counter
