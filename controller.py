@@ -9,7 +9,7 @@ file_name = "Exp4-1_v2"
 # 1) DEFINE SIMULATOR CLASS AND ADD COMPARTMENTS
 sim = simulator3.Simulator(file_name)
 
-sim.add_default_multicompartment(number_of_comps=9, rad=0.5e-5, len=20e-5, soma=True)
+sim.add_default_multicompartment(number_of_comps=9, rad=0.5e-5, len=20e-5, soma=False)
 
 # 2) SET SIMULATION SETTINGS
 

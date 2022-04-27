@@ -29,6 +29,7 @@ import numpy as np
 import electrodiffusion
 import time
 
+
 class SimulatorFromHDF:
 
     def __init__(self, old_file_name, new_file_name, amend_type='Extend'):
@@ -104,7 +105,7 @@ class SimulatorFromHDF:
             # only find the second last interval for the first compartment
             comp = comps.get(comp_list[0])
             comp_intervals_list = list(comp.keys())
-            oldSim_last_interval = len(comp_intervals_list) -1
+            oldSim_last_interval = len(comp_intervals_list) - 1
             oldSim_last_step = oldSim_interval_arr[oldSim_last_interval]
             self.oldSim_timing_dict = {"total_t": oldSim_total_t, "dt": oldSim_dt, "intervals": oldSim_intervals,
                                        "last_step": oldSim_last_step, "interval_step": oldSim_interval_step,
@@ -126,10 +127,8 @@ class SimulatorFromHDF:
                 comp = compartment.Compartment(compartment_name=comp_name, radius=rad, length=length,
                                                sa_value=sa_start, static_sa=True)
                 comp.set_ion_properties(na_i=na, k_i=k, cl_i=cl, x_i=x, z_i=z, osmol_neutral_start=False)
-
+                comp.na_i_start = self.na_start
                 self.comp_arr.append(comp)
-
-
 
     def _resume_sim(self):
 
@@ -163,7 +162,7 @@ class SimulatorFromHDF:
                 oldSim_intervals = T.get('INTERVALS')[()]
 
             oldSim_total_steps = round(oldSim_total_t / oldSim_dt)
-            oldSim_interval_step = round(oldSim_total_steps / oldSim_intervals)+1
+            oldSim_interval_step = round(oldSim_total_steps / oldSim_intervals) + 1
             oldSim_interval_arr = [round(oldSim_interval_step * i) for i in range(oldSim_intervals)]
 
             comps = hdf_new.get(groups[0])
@@ -194,17 +193,81 @@ class SimulatorFromHDF:
                 comp = compartment.Compartment(compartment_name=comp_name, radius=rad, length=length,
                                                sa_value=sa_start, static_sa=True)
                 comp.set_ion_properties(na_i=na, k_i=k, cl_i=cl, x_i=x, z_i=z, osmol_neutral_start=False)
-
+                comp.na_i_start = self.na_start
                 self.comp_arr.append(comp)
 
     def _last_values_sim(self):
-        print('code not complete')
+
+        # Open old HDF file and copy only last values into new file
+
+        comp_arr_lastvalues = [] #saves all the last values of the base experiment
+        comp_arr_startvalues = [] #saves all the first values of the base experiment
+
+        with h5py.File(self.old_file_name, mode='r') as hdf_old:
+            C = hdf_old.get('COMPARTMENTS')
+            C_group_arr = []
+            comp_names_arr = list(C.keys())
+            T = hdf_old.get('TIMING')
+            total_t = T.get('TOTAL_T')[()]
+            intervals = T.get('INTERVALS')[()]
+            dt = T.get("DT")[()]
+            total_steps = total_t / dt
+            interval_step = total_steps / intervals
+            interval_arr = [int(interval_step * i) for i in range(intervals)]
+
+            # Looping through old compartments and saving last dataset values
+
+
+            for _ in comp_names_arr:
+                comp = C.get(_)
+                steplist = list(comp.keys())
+                rev_interval_arr = interval_arr[::-1]
+                for j in rev_interval_arr:
+                    interval = j
+                    if str(interval) in str(steplist):
+                        last_time_point = str(interval)
+                        break
+                last_dataset = comp.get(last_time_point)
+                comp_arr_lastvalues.append(list(last_dataset))
+                first_time_point = str(interval_arr[0])
+                first_dataset = comp.get(first_time_point)
+                comp_arr_startvalues.append(list(first_dataset))
+        hdf_old.close()
+
+        # writing last values to the new file
+        comp_arr = []  # array of compartment objects
+        with h5py.File(self.file_name, mode='w') as hdf_new:
+            hdf_new.create_group('COMPARTMENTS')
+            C = hdf_new.get("COMPARTMENTS")
+            for i in range(len(comp_names_arr)):
+                C.create_group(comp_names_arr[i])
+                Comp = C.get(comp_names_arr[i])
+                last_dataset = comp_arr_lastvalues[i]
+                last_dataset[0] = 0
+                Comp.create_dataset(name='0',data=last_dataset)
+                ## creating a new compartment object and adding to the simulator
+                rad = last_dataset[1]
+                length = last_dataset[2]
+                initial_sa = 2 * np.pi * comp_arr_startvalues[i][1] * comp_arr_startvalues[i][2]
+                comp = compartment.Compartment(compartment_name=comp_names_arr[i],radius=rad,length=length,static_sa=True, sa_value=initial_sa)
+                comp.set_ion_properties(na_i=last_dataset[4],k_i=last_dataset[5],cl_i=last_dataset[6],
+                                        x_i=last_dataset[7],z_i=last_dataset[8],osmol_neutral_start=False)
+                comp.vm = last_dataset[-3]
+                comp.na_i_start = comp_arr_startvalues[i][4] #required for ATPase
+                self.comp_arr.append(comp)
+        hdf_new.close()
+
+
+
+
+
 
     def add_compartment(self, comp=compartment.Compartment):
         print('code not complete')
 
+
     def set_electrodiffusion_properties(self, ED_on: bool = True,
-                                        diff_constant_dict=None):
+                                    diff_constant_dict=None):
         """
         Function to define the electrodiffusion setup at the beginning of a simulation.
         @param ED_on: boolean, sets either electrodiffusion between compartments to be on or off.
@@ -228,21 +291,25 @@ class SimulatorFromHDF:
 
                 ed.set_diff_constants(self.diff_constants)
                 self.ed_arr.append(ed)
+        if self.amend_type =='LastValues':
+            with h5py.File(self.file_name, mode='a') as self.hdf:
+                ED = self.hdf.create_group("ELECTRODIFFUSION")
+                for _ in range(len(self.ed_arr)):
+                    ED.create_group(self.comp_arr[_].name + ' -> ' + self.comp_arr[_+1].name)
 
-    def set_timing(self, extend_t=30):
-
+    def set_timing(self, extend_t=None,dt=None,total_t=None,intervals=None):
         if self.amend_type == "Extend":
             self.extend_t = extend_t
             self.dt = self.oldSim_timing_dict["dt"]
             self.run_t = self.oldSim_timing_dict["last_step"] * self.oldSim_timing_dict["dt"]
             self.total_t = self.run_t + self.extend_t
             self.total_steps = self.total_t / self.dt
-            self.start_step = self.run_t / self.dt +1
+            self.start_step = self.run_t / self.dt + 1
             self.remaining_steps = self.total_steps - self.start_step
             self.intervals = round(self.total_steps / self.oldSim_timing_dict["interval_step"])
             self.interval_arr = [int(i * self.oldSim_timing_dict["interval_step"]) for i in range(self.intervals)]
             self.output_intervals = (0.001, 0.005, 0.01, 0.1, 0.25, 0.5, 0.75, 1)
-            self.output_arr = [self.start_step+ (round(self.output_intervals[a] * self.remaining_steps, 0)) for a in
+            self.output_arr = [self.start_step + (round(self.output_intervals[a] * self.remaining_steps, 0)) for a in
                                range(len(self.output_intervals))]
             self.output_arr = tuple(self.output_arr)
 
@@ -260,18 +327,41 @@ class SimulatorFromHDF:
             self.run_t = self.oldSim_timing_dict["last_step"] * self.oldSim_timing_dict["dt"]
             self.total_t = self.oldSim_timing_dict["total_t"]
             self.total_steps = self.total_t / self.dt
-            self.start_step = self.run_t / self.dt +1
+            self.start_step = self.run_t / self.dt + 1
             self.remaining_steps = self.total_steps - self.start_step
             self.intervals = round(self.total_steps / self.oldSim_timing_dict["interval_step"])
             self.interval_arr = [int(i * self.oldSim_timing_dict["interval_step"]) for i in range(self.intervals)]
             self.output_intervals = (0.001, 0.005, 0.01, 0.1, 0.25, 0.5, 0.75, 1)
-            self.output_arr = [self.start_step+ (round(self.output_intervals[a] * self.remaining_steps, 0)) for a in
+            self.output_arr = [self.start_step + (round(self.output_intervals[a] * self.remaining_steps, 0)) for a in
                                range(len(self.output_intervals))]
             self.output_arr = tuple(self.output_arr)
 
             with h5py.File(self.file_name, mode='a') as self.hdf:
                 timing = self.hdf.get("TIMING")
                 timing.create_dataset("RESUME_T", data=self.run_t)
+
+            for i in range(len(self.comp_arr)):
+                self.comp_arr[i].dt = self.dt
+
+        if self.amend_type == "LastValues":
+            self.dt = dt
+            self.total_t = total_t
+            self.intervals = intervals
+            self.total_steps = self.total_t / self.dt
+            self.interval_step = int(self.total_steps / self.intervals)
+            self.run_t = 0
+            self.start_step = 1
+            self.interval_arr = [i * self.interval_step for i in range(self.intervals)]
+            self.output_intervals = (0.001, 0.005, 0.01, 0.1, 0.25, 0.5, 0.75, 1)
+            self.output_arr = [round(self.total_steps * _) for _ in self.output_intervals]
+            self.output_arr = tuple(self.output_arr)
+
+            with h5py.File(self.file_name, mode='a') as self.hdf:
+                timing = self.hdf.create_group("TIMING")
+                T = self.hdf.get("TIMING")
+                T.create_dataset("DT", data=self.dt)
+                T.create_dataset("TOTAL_T", data=total_t)
+                T.create_dataset("INTERVALS", data=intervals)
 
             for i in range(len(self.comp_arr)):
                 self.comp_arr[i].dt = self.dt
@@ -289,6 +379,7 @@ class SimulatorFromHDF:
         self.x_o = -1 * (self.cl_o - self.na_o - self.k_o)
         self.osm_o = self.x_o + self.na_o + self.cl_o + self.k_o
 
+
     def set_static_sa(self, static_sa=True):
         """
         Function to fix surface area
@@ -300,6 +391,7 @@ class SimulatorFromHDF:
         for i in range(len(self.comp_arr)):
             self.comp_arr[i].static_sa = self.static_sa
 
+
     def set_atpase_static(self, static_atpase=True):
         """
         Function to change ATPase pump rate from dynamic (dependant on sodium concentration) to static (independent)
@@ -308,12 +400,88 @@ class SimulatorFromHDF:
         self.static_atpase = static_atpase
         for i in range(len(self.comp_arr)):
             self.comp_arr[i].static_sa = self.static_atpase
-            self.comp_arr[i].na_i_start = self.na_start
+
+    def get_avg_osmo(self, excl_comp_name=''):
+        """
+        Determines the average osmolarity in all the compartments.
+        @param excl_comp_name: exclude a particular compartments from the calculation
+        - useful for calculating the average osmolarity when z is being fluxed in a particular compartment.
+        """
+        total_osmo = 0
+        counter = 0
+        for i in self.comp_arr:
+            if i.name != excl_comp_name and i.name != "Comp0(Soma)":
+                total_osmo += i.osm_i
+                counter += 1
+        avg_osmo = total_osmo / counter
+        return avg_osmo
+
+    def add_current(self, comp_name='', current_type='Inhibitory', start_t=0, duration=2 * 1e-3,
+                    current_A=1e-3, dt=1e-6, total_t=1, frequency=1):
+        """
+        Function to add a current to a particular compartment
+        @param comp_name: string, compartment name that current is being pulsed into
+        @param current_type: string, "Excitatory" or "Inhibitory" current
+        @param start_t: float, start time of the current (in seconds)
+        @param duration: float, duration of current (in seconds)
+        @param current_A: float, amount of current injected (in Amperes)
+        @param total_t: float,total simulation time
+        @param frequency: float, Hz (pulses/second)
+        @return:
+        """
+
+        self.sim_current_params["On"] = True
+
+        comp_num = 0
+        for i in range(len(self.comp_arr)):
+            if comp_name == self.comp_arr[i].name:
+                comp_num = i
+                self.sim_current_params["compartment"] = comp_num
+
+        if current_type == "Inhibitory":
+            self.current_type = 0
+            self.sim_current_params["current_type"] = "inhibitory"
+        elif current_type == "Excitatory":
+            self.current_type = 1
+            self.sim_current_params["current_type"] = "excitatory"
+
+        self.sim_current_params["start_t"] = start_t + self.run_t
+        self.sim_current_params["duration"] = duration
+        self.sim_current_params["current_A"] = current_A
+        self.sim_current_params["frequency"] = frequency
+
+        self.pulse_start_t_arr = []
+        self.pulse_end_t_arr = []
+        remaining_time = total_t - start_t
+        time_intervals = remaining_time / frequency
+
+        for i in range(frequency):
+            pulse_start_t = time_intervals * (i) + start_t + self.run_t
+            pulse_end_t = pulse_start_t + duration
+            self.pulse_start_t_arr.append(pulse_start_t + self.run_t)
+            self.pulse_end_t_arr.append(pulse_end_t)
+
+        self.comp_arr[comp_num].dt = dt
+        self.comp_arr[comp_num].set_current(current_type=self.current_type, current_amplitude=current_A)
+        current_settings_list = list(self.sim_current_params.values())
+        current_settings_list = current_settings_list[1:]
+        if current_settings_list[1] == 'excitatory':
+            current_settings_list[1] = 1
+        else:
+            current_settings_list[1] =0
+        with h5py.File(self.file_name, mode='a') as self.hdf:
+            current = self.hdf.create_group("CURRENT")
+            C = self.hdf.get("CURRENT")
+            C.create_dataset("CURR", data=current_settings_list)
+
+
 
     def run_simulation(self):
-
         self.start_t = time.time()
-        self.interval_num = self.oldSim_timing_dict["last_interval"] + 1
+        if self.amend_type == "Resume" or self.amend_type =="Extend":
+            self.interval_num = self.oldSim_timing_dict["last_interval"] + 1
+        else:
+            self.interval_num = 1
         self.steps = int(self.start_step)
 
         while self.run_t < self.total_t:
@@ -329,7 +497,6 @@ class SimulatorFromHDF:
                         (a.zflux_params["start_t"] <= self.run_t < a.zflux_params[
                             "end_t"]):
                     a.z_flux()
-
 
                 if a.synapse_on:
                     a.synapse_step(run_t=self.run_t)
@@ -408,9 +575,7 @@ class SimulatorFromHDF:
                     subgroup.create_dataset(name=str(self.steps), data=data_array)
 
 
-
     def write_settings_to_file(self, basefile_name=""):
-
         settings_file_name = self.file_name + "_settings"
         f = open(settings_file_name, "w")
         f.write("SETTINGS")
@@ -519,7 +684,7 @@ class SimulatorFromHDF:
             f.write("\n")
 
         else:
-            f.write("Current onto: " + self.comp_arr[self.sim_current_params["compartment"].name])
+            f.write("Current onto: Comp" + str(self.sim_current_params["compartment"]))
             f.write("\n")
             f.write("Current type: " + self.sim_current_params["current_type"])
             f.write("\n")

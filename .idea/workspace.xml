@@ -8,20 +8,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="463dabb2-c92a-4ec9-9ee6-971ec234e991" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Exp1-4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Exp1_v2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Exp3-4_v2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Exp3-4_v2_extended" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Exp4-3_v2" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_3_multiZ-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_3_multiZ-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Figure_1_Xchange.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_1_Xchange.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Figure_3_doubleZ.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_3_doubleZ.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Figure_3_multiZ.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_3_multiZ.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Template Extended.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Template Extended.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Exp4-1_v2" beforeDir="false" afterPath="$PROJECT_DIR$/Exp4-1_v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_2_Zchange.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_2_Zchange.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_4a.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_4a.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_4b.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_4b.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Template view.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Template view.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cl_line_graph.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/cl_line_graph.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cl_tm_heatmaps.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/cl_tm_heatmaps.jpeg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller_from_hdf.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller_from_hdf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator_from_hdf.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulator_from_hdf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/f2d_cl_boundary.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/f2d_cl_boundary.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/f2d_k_boundary.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/f2d_k_boundary.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/f2d_na_boundary.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/f2d_na_boundary.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k_line_graph.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/k_line_graph.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k_tm_heatmaps.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/k_tm_heatmaps.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/na_line_graph.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/na_line_graph.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/na_tm_heatmaps.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/na_tm_heatmaps.jpeg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,6 +65,9 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$USER_HOME$/AppData/Local/Programs/Python/Python39/Lib/site-packages/h5py/_hl/group.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/AppData/Local/Programs/Python/Python39/Lib/site-packages/h5py/_hl/files.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/AppData/Local/Programs/Python/Python39/Lib/site-packages/h5py/_hl/dataset.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/simulator_from_hdf.py" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="JupyterTrust" id="5532e97b-89ea-4989-88fe-5d4c62c54ea1" />
@@ -92,7 +98,7 @@
       </console-settings>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Controller">
+  <component name="RunManager" selected="Python.Controller_from_HDF">
     <configuration name="Controller" type="PythonConfigurationType" factoryName="Python">
       <module name="Multicompartment Trials" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -269,7 +275,8 @@
       <workItem from="1650377003186" duration="5451000" />
       <workItem from="1650452221684" duration="16981000" />
       <workItem from="1650613321912" duration="7686000" />
-      <workItem from="1650786862543" duration="447000" />
+      <workItem from="1650786862543" duration="24363000" />
+      <workItem from="1651059464186" duration="5446000" />
     </task>
     <servers />
   </component>
@@ -298,19 +305,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/simulator_from_hdf.py</url>
-          <line>276</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/simulator_from_hdf.py</url>
-          <line>174</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/controller_from_hdf.py</url>
-          <line>28</line>
-          <option name="timeStamp" value="12" />
+          <url>file://$PROJECT_DIR$/compartment.py</url>
+          <line>258</line>
+          <option name="timeStamp" value="43" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -323,15 +320,15 @@
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="dt" />
+        <watch expression="self" />
       </configuration>
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Multicompartment_Trials$Controller.coverage" NAME="Controller Coverage Results" MODIFIED="1622976468303" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Multicompartment_Trials$Sandbox.coverage" NAME="Sandbox Coverage Results" MODIFIED="1610872878802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/msc_code_repo$Controller.coverage" NAME="Controller Coverage Results" MODIFIED="1650640249597" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/msc_code_repo$Controller.coverage" NAME="Controller Coverage Results" MODIFIED="1650908266785" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Multicompartment_Trials$Simulator.coverage" NAME="Controller Coverage Results" MODIFIED="1619517360404" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/msc_code_repo$Controller_from_HDF.coverage" NAME="Controller_from_HDF Coverage Results" MODIFIED="1650636677205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/msc_code_repo$Controller_from_HDF.coverage" NAME="Controller_from_HDF Coverage Results" MODIFIED="1651073798540" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

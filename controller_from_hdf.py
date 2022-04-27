@@ -14,17 +14,19 @@ import h5py
 import common
 import electrodiffusion
 
-old_file_name = "Exp3-4_v2"
-new_file_name = "asd"
-amend_type = 'Extend'
+old_file_name = "Exp4-3_v2"
+new_file_name = "Exp4-3_current"
+amend_type = 'LastValues'
 
 sim = simulator_from_hdf.SimulatorFromHDF(old_file_name, new_file_name, amend_type)
-sim.set_timing(extend_t=50)
+sim.set_timing(total_t=100e-3, dt=1e-6, intervals=100000)
+#sim.set_timing(extend_t=40)
 sim.set_electrodiffusion_properties(ED_on=True)
 sim.set_external_ion_properties()
 sim.set_static_sa()
 sim.set_atpase_static(static_atpase=True)
-
+#sim.comp_arr[7].adjust_x_bool = True
+sim.add_current(comp_name='Comp9', current_type="Excitatory", start_t=1e-3, duration=1e-3, current_A=0.1e-9)
 sim.write_settings_to_file(old_file_name)
 sim.run_simulation()
 
