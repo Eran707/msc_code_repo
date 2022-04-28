@@ -32,16 +32,18 @@ import time
 
 class SimulatorFromHDF:
 
-    def __init__(self, old_file_name, new_file_name, amend_type='Extend'):
+    def __init__(self, old_file_name, new_file_name, amend_type='Extend', already_extended = False):
         """
         @param old_file_name: hdf5 file which must be in the same base directory as this code
         @param new_file_name: name of new hdf5 which will be saved in C
         @param amend_type: "Extend" or "Resume" or "LastValues"
+        @param already_extended" "True" if you are extending an already extended file
         """
         # HDF file names and amendment type
         self.file_name = "C:\ " + new_file_name
         self.old_file_name = old_file_name
         self.amend_type = amend_type
+        self.already_extended = already_extended
         # Compartment structure initialization
         self.comp_arr, self.num_comps = [], 0
         # Surface area and pump defaults initialization
@@ -207,13 +209,24 @@ class SimulatorFromHDF:
             C = hdf_old.get('COMPARTMENTS')
             C_group_arr = []
             comp_names_arr = list(C.keys())
-            T = hdf_old.get('TIMING')
-            total_t = T.get('TOTAL_T')[()]
-            intervals = T.get('INTERVALS')[()]
-            dt = T.get("DT")[()]
-            total_steps = total_t / dt
-            interval_step = total_steps / intervals
-            interval_arr = [int(interval_step * i) for i in range(intervals)]
+            if self.already_extended == True:
+                T = hdf_old.get('TIMING')
+                prev_total_t = T.get('TOTAL_T')[()]
+                prev_intervals = T.get('INTERVALS')[()]
+                dt = T.get("EXTENDED_DT")[()]
+                prev_total_steps = round(prev_total_t / dt)
+                interval_step = prev_total_steps / prev_intervals
+                total_t = T.get('EXTENDED_TOTAL_T')[()]
+                intervals = T.get('EXTENDED_INTERVALS')[()]
+                interval_arr = [int(interval_step * i) for i in range(intervals)]
+            else:
+                T = hdf_old.get('TIMING')
+                total_t = T.get('TOTAL_T')[()]
+                intervals = T.get('INTERVALS')[()]
+                dt = T.get("DT")[()]
+                total_steps = total_t / dt
+                interval_step = total_steps / intervals
+                interval_arr = [int(interval_step * i) for i in range(intervals)]
 
             # Looping through old compartments and saving last dataset values
 
