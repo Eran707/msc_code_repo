@@ -325,6 +325,11 @@ class Compartment:
                  self.d_k_i, self.d_k_leak, self.d_k_atpase, self.d_k_kcc2,
                  self.d_cl_i, self.d_cl_leak, self.d_cl_kcc2,
                  self.v, self.E_k, self.E_cl]
+
+        if self.synapse_on:
+            array.append(self.synapse_dict["synapse_conductance"] * self.r )
+            #save g_synapse if synapse present
+
         return array
 
     def x_flux(self):

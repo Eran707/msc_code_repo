@@ -1,0 +1,61 @@
+SETTINGS
+=============================
+HDF5 Base File (Template) Exp5-2_v3
+HDF5 File name:C:\ Steady_085_HH
+
+==============================
+Dendrite Morphology
+==============================
+Comp0(Soma) Len(um): 40.0 Rad(um): 0.9997667889145135
+Comp1 Len(um): 20.0 Rad(um): 0.49985821348234494
+Comp2 Len(um): 20.0 Rad(um): 0.49985821579775375
+Comp3 Len(um): 20.0 Rad(um): 0.4998582179022857
+Comp4 Len(um): 20.0 Rad(um): 0.49985821973143707
+Comp5 Len(um): 20.0 Rad(um): 0.4998582212730515
+Comp6 Len(um): 20.0 Rad(um): 0.4998582225144119
+Comp7 Len(um): 20.0 Rad(um): 0.49985822345992253
+Comp8 Len(um): 20.0 Rad(um): 0.49985822408707903
+Comp9 Len(um): 20.0 Rad(um): 0.49985822440021627
+
+==============================
+General settings
+==============================
+ED on: True
+Surface Area Constant: True
+ATPase rate Constant: True
+Total sim time(s):3.0
+Time step(s): 1e-06
+#Intervals recorded in file: 10000
+Starting [Na]: 14.02541125747287
+Starting [K]: 122.82038689315414
+Starting [Cl]: 5.166313620298045
+Starting [X]: 154.98788825697514
+
+==============================
+[X]-flux settings
+==============================
+No [X]-flux
+
+==============================
+z-flux settings
+==============================
+No z-flux
+
+==============================
+Current settings
+==============================
+No external current added
+
+
+==============================
+Synapse settings
+==============================
+
+No synapses added
+
+==============================
+HH settings
+==============================
+HH channels enabled
+
+===============================

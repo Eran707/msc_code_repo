@@ -4,7 +4,7 @@ Main script to run simulation
 
 import simulator3
 
-file_name = "Exp5-1_v2"
+file_name = "Exp6-1_1"
 
 # 1) DEFINE SIMULATOR CLASS AND ADD COMPARTMENTS
 sim = simulator3.Simulator(file_name)

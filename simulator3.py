@@ -483,6 +483,9 @@ class Simulator:
                         if (self.run_t >= self.pulse_start_t_arr[i]) and (self.run_t <= self.pulse_end_t_arr[i]):
                             a.current_step(dt=self.dt)
 
+            if self.hh_on and self.run_t >= self.hh_t_on:
+                self.comp_arr[self.hh_comp_num].hh_on = True
+
                     # electrodiffusion dictionary for each compartment
 
             if self.ED_on:
@@ -503,6 +506,7 @@ class Simulator:
                     d.update_volumes()
                     # updates of the volumes, arrays for each compartment
 
+
             for f in range(len(self.output_arr) - 1):
                 if self.steps == self.output_arr[f]:
                     if f == 2:
@@ -516,8 +520,7 @@ class Simulator:
                         print(str(self.output_intervals[f] * 100) + " % complete in " + str(
                             round(time.time() - self.start_t, 2)) + " s")
 
-            if self.hh_on and self.run_t >= self.hh_t_on:
-                self.comp_arr[self.hh_comp_num].hh_on = True
+
 
             if self.interval_num < len(self.interval_arr):
                 if self.steps == self.interval_arr[self.interval_num]:

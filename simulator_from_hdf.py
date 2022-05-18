@@ -23,7 +23,7 @@ Date:  April 2022
 """
 
 import compartment
-import common
+from common import F
 import h5py
 import numpy as np
 import electrodiffusion
@@ -95,11 +95,19 @@ class SimulatorFromHDF:
         with h5py.File(self.file_name, mode='r') as hdf_new:
 
             T = hdf_new.get('TIMING')
-            oldSim_total_t = T.get('TOTAL_T')[()]
-            oldSim_dt = T.get("DT")[()]
-            oldSim_intervals = T.get('INTERVALS')[()]
+            if self.already_extended == False:
+                oldSim_total_t = T.get('TOTAL_T')[()]
+                oldSim_dt = T.get("DT")[()]
+                oldSim_intervals = T.get('INTERVALS')[()]
+                oldSim_interval_step = oldSim_total_steps / oldSim_intervals
+            else:
+                oldSim_total_t = T.get('EXTENDED_TOTAL_T')[()]
+                oldSim_dt = T.get("EXTENDED_DT")[()]
+                oldSim_intervals = T.get('EXTENDED_INTERVALS')[()]
+                oldSim_interval_step = T.get('EXTENDED_INTERVAL_STEP')[()]
+
             oldSim_total_steps = oldSim_total_t / oldSim_dt
-            oldSim_interval_step = oldSim_total_steps / oldSim_intervals
+
             oldSim_interval_arr = [round(oldSim_interval_step * i) for i in range(oldSim_intervals)]
 
             comps = hdf_new.get(groups[0])
@@ -328,7 +336,15 @@ class SimulatorFromHDF:
             self.output_arr = tuple(self.output_arr)
 
             with h5py.File(self.file_name, mode='a') as self.hdf:
-                timing = self.hdf.get("TIMING")
+                if self.already_extended == False:
+                    timing = self.hdf.get("TIMING")
+                elif self.already_extended ==True:
+                    try:
+                        self.hdf.create_group("TIMING_2")
+                        timing = self.hdf.get("TIMING_2")
+                    except:
+                        self.hdf.create_group("TIMING_3")
+                        timing = self.hdf.get("TIMING_3")
                 timing.create_dataset("EXTENDED_DT", data=self.dt)
                 timing.create_dataset("EXTENDED_TOTAL_T", data=self.total_t)
                 timing.create_dataset("EXTENDED_INTERVALS", data=self.intervals)
@@ -417,6 +433,11 @@ class SimulatorFromHDF:
         self.static_atpase = static_atpase
         for i in range(len(self.comp_arr)):
             self.comp_arr[i].static_sa = self.static_atpase
+
+    def set_gkcc2(self, gkcc2=2e-3):
+        self.gkcc2 = gkcc2/F
+        for i in self.comp_arr:
+            i.p_kcc2 = self.gkcc2
 
     def get_avg_osmo(self, excl_comp_name=''):
         """
