@@ -123,6 +123,9 @@ class SimulatorFromHDF:
                                        "last_interval": oldSim_last_interval}
             print(self.oldSim_timing_dict)
 
+
+
+
             # find the last value for each compartment and initialize all compartments:
 
             for _ in comp_list:
@@ -133,7 +136,12 @@ class SimulatorFromHDF:
                 dataset_start = list(hdfcomp.get("0"))
                 rad_start = dataset_start[1]
                 sa_start = 2 * np.pi * rad_start * length
-                self.na_start = dataset_start[4]
+                # RETRIEVE ATPASE SETTINGS
+                try:
+                    A = hdf_new.get('ATPASE_SETTINGS')
+                    self.na_start = A.get("NA-START")[()]
+                except:
+                    self.na_start = dataset_start[4]
                 comp_name = _
                 comp = compartment.Compartment(compartment_name=comp_name, radius=rad, length=length,
                                                sa_value=sa_start, static_sa=True)
@@ -190,22 +198,39 @@ class SimulatorFromHDF:
             print(self.oldSim_timing_dict)
 
             # find the last value for each compartment and initialize all compartments:
-
+            try:
+                S = hdf_new.get('SA_SETTINGS')
+                sa_start_arr = S.get("SA-VALUES")[()]
+            except:
+                pass
+            j=0
             for _ in comp_list:
+
                 hdfcomp = comps.get(_)
                 dataset_last = list(hdfcomp.get(str(oldSim_last_step)))
                 rad, length = dataset_last[1:3]
                 na, k, cl, x, z = dataset_last[4:9]
                 dataset_start = list(hdfcomp.get("0"))
                 rad_start = dataset_start[1]
-                sa_start = 2 * np.pi * rad_start * length
-                self.na_start = dataset_start[4]
+
+                try:
+                    A = hdf_new.get('ATPASE_SETTINGS')
+                    self.na_start = A.get("NA-START")[()]
+                except:
+                    self.na_start = dataset_start[4]
+                try:
+                    sa_start = sa_start_arr[j]
+                except:
+                    sa_start = 2 * np.pi * rad_start * length
+
+
                 comp_name = _
                 comp = compartment.Compartment(compartment_name=comp_name, radius=rad, length=length,
                                                sa_value=sa_start, static_sa=True)
                 comp.set_ion_properties(na_i=na, k_i=k, cl_i=cl, x_i=x, z_i=z, osmol_neutral_start=False)
                 comp.na_i_start = self.na_start
                 self.comp_arr.append(comp)
+                j+=1
 
     def _last_values_sim(self):
 
@@ -237,6 +262,12 @@ class SimulatorFromHDF:
                 interval_step = total_steps / intervals
                 interval_arr = [int(interval_step * i) for i in range(intervals)]
 
+            try:
+                S = hdf_old.get('SA_SETTINGS')
+                sa_start_arr = S.get("SA-VALUES")[()]
+            except:
+                pass
+
             # Looping through old compartments and saving last dataset values
 
 
@@ -254,6 +285,14 @@ class SimulatorFromHDF:
                 first_time_point = str(interval_arr[0])
                 first_dataset = comp.get(first_time_point)
                 comp_arr_startvalues.append(list(first_dataset))
+
+            try:
+                A = hdf_old.get('ATPASE_SETTINGS')
+                self.na_start = A.get("NA-START")[()]
+            except:
+                self.na_start = dataset_start[4]
+
+
         hdf_old.close()
 
         # writing last values to the new file
@@ -270,12 +309,15 @@ class SimulatorFromHDF:
                 ## creating a new compartment object and adding to the simulator
                 rad = last_dataset[1]
                 length = last_dataset[2]
-                initial_sa = 2 * np.pi * comp_arr_startvalues[i][1] * comp_arr_startvalues[i][2]
+                try:
+                    initial_sa =sa_start_arr[i]
+                except:
+                    initial_sa = 2 * np.pi * comp_arr_startvalues[i][1] * comp_arr_startvalues[i][2]
                 comp = compartment.Compartment(compartment_name=comp_names_arr[i],radius=rad,length=length,static_sa=True, sa_value=initial_sa)
                 comp.set_ion_properties(na_i=last_dataset[4],k_i=last_dataset[5],cl_i=last_dataset[6],
                                         x_i=last_dataset[7],z_i=last_dataset[8],osmol_neutral_start=False)
                 comp.vm = last_dataset[-3]
-                comp.na_i_start = comp_arr_startvalues[i][4] #required for ATPase
+                comp.na_i_start = self.na_start
                 self.comp_arr.append(comp)
         hdf_new.close()
 
@@ -413,8 +455,14 @@ class SimulatorFromHDF:
             The implication of this is that the channel conductances aren't scaled by surface area.
         """
         self.static_sa = static_sa
+        sa_values_data =[]
         for i in range(len(self.comp_arr)):
             self.comp_arr[i].static_sa = self.static_sa
+            sa_values_data.append(self.comp_arr[i].sa)
+
+        with h5py.File(self.file_name, mode='a') as self.hdf:
+            static_settings = self.hdf.create_group("SA_SETTINGS")
+            static_settings.create_dataset(name="SA-VALUES", data=sa_values_data)
 
 
     def set_atpase_static(self, static_atpase=True):
@@ -425,6 +473,23 @@ class SimulatorFromHDF:
         self.static_atpase = static_atpase
         for i in range(len(self.comp_arr)):
             self.comp_arr[i].static_sa = self.static_atpase
+
+        atpase_settings_data= []
+        if static_atpase:
+            atpase_settings_data.append(1)
+        else:
+            atpase_settings_data.append(0)
+
+        atpase_settings_data.append(self.comp_arr[1].p_atpase)
+        atpase_settings_data.append(self.comp_arr[1].na_i_start)
+
+
+        with h5py.File(self.file_name, mode='a') as self.hdf:
+            self.hdf.create_group("ATPASE_SETTINGS")
+            atpase_settings = self.hdf.get("ATPASE_SETTINGS")
+            atpase_settings.create_dataset(name="STATIC", data=atpase_settings_data[0])
+            atpase_settings.create_dataset(name="P-ATPASE", data=atpase_settings_data[1])
+            atpase_settings.create_dataset(name="NA-START", data=atpase_settings_data[2])
 
     def set_gkcc2(self, gkcc2=2e-3):
         self.gkcc2 = gkcc2/F
@@ -703,8 +768,6 @@ class SimulatorFromHDF:
         f.write("\n")
         f.write("Surface Area Constant: " + str(self.static_sa))
         f.write("\n")
-        f.write("ATPase rate Constant: " + str(self.static_atpase))
-        f.write("\n")
         f.write("Total sim time(s):" + str(self.total_t))
         f.write("\n")
         f.write("Time step(s): " + str(self.dt))
@@ -718,6 +781,22 @@ class SimulatorFromHDF:
         f.write("Starting [Cl]: " + str(self.comp_arr[1].cl_i * 1e3))
         f.write("\n")
         f.write("Starting [X]: " + str(self.comp_arr[1].x_i * 1e3))
+        f.write("\n")
+        f.write("\n")
+        f.write("\n")
+        f.write("==============================")
+        f.write("\n")
+        f.write("Pump settings")
+        f.write("\n")
+        f.write("==============================")
+        f.write("\n")
+        f.write("ATPase rate Constant: " + str(self.static_atpase))
+        f.write("\n")
+        f.write("ATPase starting [Na]: " + str(self.comp_arr[1].na_i_start * 1e3))
+        f.write("\n")
+        f.write("ATPase pump constant: " + str(self.comp_arr[1].p_atpase))
+        f.write("\n")
+        f.write("g_KCC2: " + str(self.comp_arr[1].p_kcc2))
         f.write("\n")
         f.write("\n")
         f.write("==============================")

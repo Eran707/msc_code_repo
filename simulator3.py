@@ -11,9 +11,9 @@ Creator: Eran Shorer
 import time
 import h5py
 import numpy as np
-import pandas as pd
 import compartment
 import electrodiffusion
+
 
 
 class Simulator:
@@ -32,6 +32,7 @@ class Simulator:
                 self.hdf.create_group('COMPARTMENTS')
                 self.hdf.create_group('ELECTRODIFFUSION')
                 self.hdf.create_group("TIMING")
+                self.hdf.create_group("ATPASE_SETTINGS")
                 self.hdf.create_group("X-FLUX-SETTINGS")
                 self.hdf.create_group("CURRENT-SETTINGS")
                 self.hdf.create_group("SYNAPSE-SETTINGS")
@@ -181,10 +182,30 @@ class Simulator:
         """
         Function to change ATPase pump rate from dynamic (dependant on sodium concentration) to static (independent)
         @param static_atpase: boolean --> if true ATPase is static
+
+        Saves ATP-pump settings to file
         """
         self.static_atpase = static_atpase
+
         for i in range(len(self.comp_arr)):
             self.comp_arr[i].static_sa = self.static_atpase
+
+        atpase_settings_data =[]
+        if static_atpase:
+            atpase_settings_data.append(1)
+        else:
+            atpase_settings_data.append(0)
+
+        atpase_settings_data.append(self.comp_arr[1].p_atpase)
+        atpase_settings_data.append(self.comp_arr[1].na_i_start)
+
+
+        with h5py.File(self.file_name, mode='a') as self.hdf:
+            atpase_settings = self.hdf.get("ATPASE_SETTINGS")
+            atpase_settings.create_dataset(name="STATIC", data=atpase_settings_data[0])
+            atpase_settings.create_dataset(name="P-ATPASE", data=atpase_settings_data[1])
+            atpase_settings.create_dataset(name="NA-START", data=atpase_settings_data[2])
+
 
     def set_sa_static(self, static_sa=True):
         """
@@ -194,8 +215,14 @@ class Simulator:
             The implication of this is that the channel conductances aren't scaled by surface area.
         """
         self.static_sa = static_sa
+        sa_values_data = []
         for i in range(len(self.comp_arr)):
             self.comp_arr[i].static_sa = self.static_sa
+            sa_values_data.append(self.comp_arr[i].sa)
+
+        with h5py.File(self.file_name, mode='a') as self.hdf:
+            static_settings = self.hdf.create_group("SA_SETTINGS")
+            static_settings.create_dataset(name="SA-VALUES", data=sa_values_data)
 
     def set_hh_on(self, comp="Comp0(Soma)", t_on=5):
         """
@@ -204,12 +231,17 @@ class Simulator:
             default is the name of the soma
         @param t_on: float, time when to add HH channels
             needs to be earlier than total simulation run time
+
+        If the HH channels are activated then the co
         """
         self.hh_on = True
         self.hh_t_on = t_on
         for i in range(len(self.comp_arr)):
             if self.comp_arr[i].name == comp:
                 self.hh_comp_num = i
+
+        hh_settings_data = [self.hh_comp_num, self.hh_t_on]
+
 
     def set_timing(self, total_t, time_step=1e-6, intervals=1000):
         """
@@ -591,8 +623,6 @@ class Simulator:
         f.write("\n")
         f.write("Surface Area Constant: " + str(self.static_sa))
         f.write("\n")
-        f.write("ATPase rate Constant: " + str(self.static_atpase))
-        f.write("\n")
         f.write("Total sim time(s):" + str(self.total_t))
         f.write("\n")
         f.write("Time step(s): " + str(self.dt))
@@ -606,6 +636,21 @@ class Simulator:
         f.write("Starting [Cl]: " + str(self.comp_arr[1].cl_i * 1e3))
         f.write("\n")
         f.write("Starting [X]: " + str(self.comp_arr[1].x_i * 1e3))
+        f.write("\n")
+        f.write("\n")
+        f.write("==============================")
+        f.write("\n")
+        f.write("Pump settings")
+        f.write("\n")
+        f.write("==============================")
+        f.write("\n")
+        f.write("ATPase rate Constant: " + str(self.static_atpase))
+        f.write("\n")
+        f.write("ATPase starting [Na]: " + str(self.comp_arr[1].na_i_start * 1e3))
+        f.write("\n")
+        f.write("ATPase pump constant: " + str(self.comp_arr[1].p_atpase))
+        f.write("\n")
+        f.write("g_KCC2: " + str(self.comp_arr[1].p_kcc2))
         f.write("\n")
         f.write("\n")
         f.write("==============================")
@@ -682,7 +727,6 @@ class Simulator:
         f.write("Synapse settings")
         f.write("\n")
         f.write("==============================")
-        f.write("\n")
         if not self.syn_dict["On"]:
             f.write("\n")
             f.write("No synapses added")
