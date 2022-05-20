@@ -290,7 +290,7 @@ class SimulatorFromHDF:
                 A = hdf_old.get('ATPASE_SETTINGS')
                 self.na_start = A.get("NA-START")[()]
             except:
-                self.na_start = dataset_start[4]
+                self.na_start = first_dataset[4]
 
 
         hdf_old.close()
@@ -446,18 +446,19 @@ class SimulatorFromHDF:
         self.x_o = -1 * (self.cl_o - self.na_o - self.k_o)
         self.osm_o = self.x_o + self.na_o + self.cl_o + self.k_o
 
-    def set_sa(self,rad=0.5e-5, len=20e-5):
+    def set_sa(self,rad=0.5e-5, length=20e-5):
         """
         Function to preset surface area
         @param rad: radius in dm
         @param len: length in dm
         @return:
         """
+
         for i in range(len(self.comp_arr)):
             if self.comp_arr[i].name =='Comp0(Soma)':
-                self.comp_arr[i].sa = 2 * np.pi * (2 * rad) * (2 * len)
+                self.comp_arr[i].sa = 2 * np.pi * (2 * rad) * (2 * length)
             else:
-                self.comp_arr[i].sa  = 2 * np.pi * (rad) * (len)
+                self.comp_arr[i].sa  = 2 * np.pi * (rad) * (length)
         return
 
     def set_static_sa(self, static_sa=True):
