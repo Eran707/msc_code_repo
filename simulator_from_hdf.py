@@ -23,7 +23,7 @@ Date:  April 2022
 """
 
 import compartment
-import common
+from common import F
 import h5py
 import numpy as np
 import electrodiffusion
@@ -65,7 +65,8 @@ class SimulatorFromHDF:
         # Current initialization
         self.sim_current_params = {"On": False}
         # Synapse initialization
-        self.syn_dict = {"On": False}
+        self.syn_arr = []
+        self.syn_count =0
         # Hodgkin-Huxley initialization :
         self.hh_on, self.hh_comp_num, self.hh_t_on = False, 0, 0
 
@@ -94,11 +95,19 @@ class SimulatorFromHDF:
         with h5py.File(self.file_name, mode='r') as hdf_new:
 
             T = hdf_new.get('TIMING')
-            oldSim_total_t = T.get('TOTAL_T')[()]
-            oldSim_dt = T.get("DT")[()]
-            oldSim_intervals = T.get('INTERVALS')[()]
+            if self.already_extended == False:
+                oldSim_total_t = T.get('TOTAL_T')[()]
+                oldSim_dt = T.get("DT")[()]
+                oldSim_intervals = T.get('INTERVALS')[()]
+                oldSim_interval_step = oldSim_total_steps / oldSim_intervals
+            else:
+                oldSim_total_t = T.get('EXTENDED_TOTAL_T')[()]
+                oldSim_dt = T.get("EXTENDED_DT")[()]
+                oldSim_intervals = T.get('EXTENDED_INTERVALS')[()]
+                oldSim_interval_step = T.get('EXTENDED_INTERVAL_STEP')[()]
+
             oldSim_total_steps = oldSim_total_t / oldSim_dt
-            oldSim_interval_step = oldSim_total_steps / oldSim_intervals
+
             oldSim_interval_arr = [round(oldSim_interval_step * i) for i in range(oldSim_intervals)]
 
             comps = hdf_new.get(groups[0])
@@ -164,7 +173,7 @@ class SimulatorFromHDF:
                 oldSim_intervals = T.get('INTERVALS')[()]
 
             oldSim_total_steps = round(oldSim_total_t / oldSim_dt)
-            oldSim_interval_step = round(oldSim_total_steps / oldSim_intervals) + 1
+            oldSim_interval_step = round(oldSim_total_steps / oldSim_intervals)
             oldSim_interval_arr = [round(oldSim_interval_step * i) for i in range(oldSim_intervals)]
 
             comps = hdf_new.get(groups[0])
@@ -271,14 +280,6 @@ class SimulatorFromHDF:
         hdf_new.close()
 
 
-
-
-
-
-    def add_compartment(self, comp=compartment.Compartment):
-        print('code not complete')
-
-
     def set_electrodiffusion_properties(self, ED_on: bool = True,
                                     diff_constant_dict=None):
         """
@@ -327,7 +328,15 @@ class SimulatorFromHDF:
             self.output_arr = tuple(self.output_arr)
 
             with h5py.File(self.file_name, mode='a') as self.hdf:
-                timing = self.hdf.get("TIMING")
+                if self.already_extended == False:
+                    timing = self.hdf.get("TIMING")
+                elif self.already_extended ==True:
+                    try:
+                        self.hdf.create_group("TIMING_2")
+                        timing = self.hdf.get("TIMING_2")
+                    except:
+                        self.hdf.create_group("TIMING_3")
+                        timing = self.hdf.get("TIMING_3")
                 timing.create_dataset("EXTENDED_DT", data=self.dt)
                 timing.create_dataset("EXTENDED_TOTAL_T", data=self.total_t)
                 timing.create_dataset("EXTENDED_INTERVALS", data=self.intervals)
@@ -351,7 +360,10 @@ class SimulatorFromHDF:
 
             with h5py.File(self.file_name, mode='a') as self.hdf:
                 timing = self.hdf.get("TIMING")
-                timing.create_dataset("RESUME_T", data=self.run_t)
+                try:
+                    timing.create_dataset("RESUME_T", data=self.run_t)
+                except:
+                    timing.create_dataset("RESUME_T2", data=self.run_t)
 
             for i in range(len(self.comp_arr)):
                 self.comp_arr[i].dt = self.dt
@@ -413,6 +425,11 @@ class SimulatorFromHDF:
         self.static_atpase = static_atpase
         for i in range(len(self.comp_arr)):
             self.comp_arr[i].static_sa = self.static_atpase
+
+    def set_gkcc2(self, gkcc2=2e-3):
+        self.gkcc2 = gkcc2/F
+        for i in self.comp_arr:
+            i.p_kcc2 = self.gkcc2
 
     def get_avg_osmo(self, excl_comp_name=''):
         """
@@ -487,7 +504,69 @@ class SimulatorFromHDF:
             C = self.hdf.get("CURRENT")
             C.create_dataset("CURR", data=current_settings_list)
 
+    def add_synapse(self, comp_name='', synapse_type='Inhibitory', start_t=0, duration=2 * 1e-3,
+                    max_neurotransmitter=1e-3, synapse_conductance=1e-9):
+        """
+        function to add a synapse to a particular compartment
+        @param synapse_type: string,either 'Inhibitory' (GABAergic) or 'Excitatory' (Glutamatergic)
+        @param comp_name: string,compartment name on which to synapse onto
+        @param start_t: float,start time for synaptic input
+        @param duration: float,duration of synaptic input
+        @param max_neurotransmitter: float,max neurotransmitter concentration in moles/liter
+        @param synapse_conductance: float, conductance of the synapse channel in Siemens, default is 1nS
+        """
+        syn_dict = {}
+        self.syn_count +=1
+        syn_dict["On"] = True
+        syn_dict["Synapse_num" ] = self.syn_count
+        comp_num = 0
+        for i in range(len(self.comp_arr)):
+            if comp_name == self.comp_arr[i].name:
+                comp_num = i
+                syn_dict["compartment"] = comp_num
 
+        if synapse_type == "Excitatory":
+            syn_dict["synapse_type"] = 0
+            syn_dict["alpha"] = 2e6  # ms-1.mM-1 --> s-1.M-1= Forward rate constant
+            syn_dict["beta"] = 1e3  # ms-1 --> s-1 == Backward rate constant
+        elif synapse_type == "Inhibitory":
+            syn_dict["synapse_type"] = 1
+            syn_dict["alpha"] = 0.5e6  # ms-1.mM-1 --> s-1.M-1= Forward rate constant
+            syn_dict["beta"] = 0.1e3  # ms-1 --> s-1 == Backward rate constant
+
+        syn_dict["start_t"] = start_t
+        syn_dict["duration"] = duration
+        syn_dict["end_t"] = start_t + duration
+        syn_dict["max_neurotransmitter_conc"] = max_neurotransmitter
+        syn_dict["synapse_conductance"] = synapse_conductance
+        self.comp_arr[comp_num].set_synapse(syn_dict, self.dt)
+        self.syn_arr.append(syn_dict)
+
+        with h5py.File(self.file_name, mode='a') as self.hdf:
+            synapse_name = "SYNAPSE-" + self.comp_arr[comp_num].name
+            syn_data_arr = list(syn_dict.values())
+            try:
+                self.hdf.create_group("SYNAPSE-SETTINGS")
+            except:
+                pass
+            synapse_group = self.hdf.get("SYNAPSE-SETTINGS")
+            synapse_group.create_dataset(name=synapse_name, data=syn_data_arr)
+
+        return
+
+    def set_hh_on(self, comp="Comp0(Soma)", t_on=5):
+        """
+        Function to add Hodgkin-Huxley Channels to a compartment
+        @param comp: string, name of the compartment which requires HH channels
+            default is the name of the soma
+        @param t_on: float, time when to add HH channels
+            needs to be earlier than total simulation run time
+        """
+        self.hh_on = True
+        self.hh_t_on = t_on
+        for i in range(len(self.comp_arr)):
+            if self.comp_arr[i].name == comp:
+                self.hh_comp_num = i
 
     def run_simulation(self):
         self.start_t = time.time()
@@ -716,33 +795,36 @@ class SimulatorFromHDF:
         f.write("\n")
         f.write("==============================")
         f.write("\n")
-        if not self.syn_dict["On"]:
+        if len(self.syn_arr) == 0:
             f.write("\n")
             f.write("No synapses added")
             f.write("\n")
         else:
-            f.write("\n")
-            f.write("Synapse on:" + self.comp_arr[self.syn_dict["compartment"]].name)
-            f.write("\n")
-            if self.syn_dict["synapse_type"] == 0:
+            for j in range(len(self.syn_arr)):
                 f.write("\n")
-                f.write("Synapse type: Excitatory")
-            else:
+                f.write("Synapse number:" + str(self.syn_arr[j]["Synapse_num"]))
                 f.write("\n")
-                f.write("Synapse type: Inhibitory")
-            f.write("\n")
-            f.write("alpha rate constant: " + str(self.syn_dict["alpha"]))
-            f.write("\n")
-            f.write("beta rate constant: " + str(self.syn_dict["beta"]))
-            f.write("\n")
-            f.write("start_t: " + str(self.syn_dict["start_t"]))
-            f.write("\n")
-            f.write("end_t: " + str(self.syn_dict["end_t"]))
-            f.write("\n")
-            f.write("max [NT](M) :" + str(self.syn_dict["max_neurotransmitter_conc"]))
-            f.write("\n")
-            f.write("synaptic conductance: " + str(self.syn_dict["synapse_conductance"]))
-            f.write("\n")
+                f.write("Synapse on:" + self.comp_arr[self.syn_arr[j]["compartment"]].name)
+                f.write("\n")
+                if self.syn_arr[j]["synapse_type"] == 0:
+                    f.write("\n")
+                    f.write("Synapse type: Excitatory")
+                else:
+                    f.write("\n")
+                    f.write("Synapse type: Inhibitory")
+                f.write("\n")
+                f.write("alpha rate constant: " + str(self.syn_arr[j]["alpha"]))
+                f.write("\n")
+                f.write("beta rate constant: " + str(self.syn_arr[j]["beta"]))
+                f.write("\n")
+                f.write("start_t: " + str(self.syn_arr[j]["start_t"]))
+                f.write("\n")
+                f.write("end_t: " + str(self.syn_arr[j]["end_t"]))
+                f.write("\n")
+                f.write("max [NT](M) :" + str(self.syn_arr[j]["max_neurotransmitter_conc"]))
+                f.write("\n")
+                f.write("synaptic conductance: " + str(self.syn_arr[j]["synapse_conductance"]))
+                f.write("\n")
         f.write("\n")
         f.write("==============================")
         f.write("\n")
