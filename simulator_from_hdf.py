@@ -446,6 +446,19 @@ class SimulatorFromHDF:
         self.x_o = -1 * (self.cl_o - self.na_o - self.k_o)
         self.osm_o = self.x_o + self.na_o + self.cl_o + self.k_o
 
+    def set_sa(self,rad=0.5e-5, len=20e-5):
+        """
+        Function to preset surface area
+        @param rad: radius in dm
+        @param len: length in dm
+        @return:
+        """
+        for i in range(len(self.comp_arr)):
+            if self.comp_arr[i].name =='Comp0(Soma)':
+                self.comp_arr[i].sa = 2 * np.pi * (2 * rad) * (2 * len)
+            else:
+                self.comp_arr[i].sa  = 2 * np.pi * (rad) * (len)
+        return
 
     def set_static_sa(self, static_sa=True):
         """
@@ -464,6 +477,15 @@ class SimulatorFromHDF:
             static_settings = self.hdf.create_group("SA_SETTINGS")
             static_settings.create_dataset(name="SA-VALUES", data=sa_values_data)
 
+    def set_na_i_start(self,na_i=14e-3):
+        """
+        Preset starting sodium concentrations
+        @param na_i: starting sodium concentrations
+        @return:
+        """
+        for _ in self.comp_arr:
+            _.na_i_start = na_i
+        return
 
     def set_atpase_static(self, static_atpase=True):
         """
@@ -482,7 +504,6 @@ class SimulatorFromHDF:
 
         atpase_settings_data.append(self.comp_arr[1].p_atpase)
         atpase_settings_data.append(self.comp_arr[1].na_i_start)
-
 
         with h5py.File(self.file_name, mode='a') as self.hdf:
             self.hdf.create_group("ATPASE_SETTINGS")
