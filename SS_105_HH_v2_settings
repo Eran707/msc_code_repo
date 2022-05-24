@@ -1,0 +1,69 @@
+SETTINGS
+=============================
+HDF5 Base File (Template) SS_105_HH
+HDF5 File name:C:\ SS_105_HH_v2
+
+==============================
+Dendrite Morphology
+==============================
+Comp0(Soma) Len(um): 40.0 Rad(um): 0.999788828112795
+Comp1 Len(um): 20.0 Rad(um): 0.4998690974264286
+Comp2 Len(um): 20.0 Rad(um): 0.4998684199495697
+Comp3 Len(um): 20.0 Rad(um): 0.4998678412665044
+Comp4 Len(um): 20.0 Rad(um): 0.4998659624757605
+Comp5 Len(um): 20.0 Rad(um): 0.499866993026206
+Comp6 Len(um): 20.0 Rad(um): 0.4998666719227503
+Comp7 Len(um): 20.0 Rad(um): 0.4998664337524175
+Comp8 Len(um): 20.0 Rad(um): 0.49986627630134667
+Comp9 Len(um): 20.0 Rad(um): 0.4998661979832866
+
+==============================
+General settings
+==============================
+ED on: True
+Surface Area Constant: True
+Total sim time(s):150
+Time step(s): 1e-06
+#Intervals recorded in file: 1000
+Starting [Na]: 14.183370579429807
+Starting [K]: 122.66294755609067
+Starting [Cl]: 5.172542621643531
+Starting [X]: 154.98113930793625
+
+
+==============================
+Pump settings
+==============================
+ATPase rate Constant: True
+ATPase starting [Na]: 14.0
+ATPase pump constant: 1.0364269884344076e-06
+g_KCC2: 2.0728539768688152e-08
+
+==============================
+[X]-flux settings
+==============================
+No [X]-flux
+
+==============================
+z-flux settings
+==============================
+No z-flux
+
+==============================
+Current settings
+==============================
+No external current added
+
+
+==============================
+Synapse settings
+==============================
+
+No synapses added
+
+==============================
+HH settings
+==============================
+HH channels enabled
+
+===============================

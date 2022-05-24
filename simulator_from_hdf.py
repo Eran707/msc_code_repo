@@ -513,10 +513,12 @@ class SimulatorFromHDF:
             atpase_settings.create_dataset(name="P-ATPASE", data=atpase_settings_data[1])
             atpase_settings.create_dataset(name="NA-START", data=atpase_settings_data[2])
 
-    def set_gkcc2(self, gkcc2=2e-3):
-        self.gkcc2 = gkcc2/F
+    def set_gkcc2(self,comp_name='Comp4', gkcc2=2e-3):
+
         for i in self.comp_arr:
-            i.p_kcc2 = self.gkcc2
+            if i.name== comp_name:
+                pkcc2 = gkcc2 / F
+                i.p_kcc2 = pkcc2
 
     def get_avg_osmo(self, excl_comp_name=''):
         """
