@@ -75,7 +75,7 @@ class Compartment:
 
         self.x_default = 154.962e-3
         self.z_default = -0.85
-
+        self.adjust_x_bool = False
         self.xflux_setup, self.zflux_setup, self.external_xflux_setup = True, True, True
         self.xflux_switch, self.zflux_switch = False, False
         self.xflux, self.xoflux = 0, 0
@@ -86,7 +86,6 @@ class Compartment:
         self.dt_xflux, self.flux_points, self.alpha, self.beta = 0, 0, 0, 0
         self.d_xflux, self.d_zflux, self.total_x_flux, self.static_xflux, self.x_final = 0, 0, 0, 0, 0
         self.osmo_final = 0
-        self.fixed_osm = False
         self.z_diff, self.z_final, self.z_diff, self.z_inc, self.zflux = 0, 0, 0, 0, 0
         self.synapse_on = False
         self.current_on = False
@@ -105,13 +104,24 @@ class Compartment:
 
         self.dt, self.syn_t_on, self.syn_t_off = 0, 0, 0  # Timing
 
-    def set_ion_properties(self, na_i=14e-3, k_i=122.9e-3, cl_i=5.2e-3,
-                           x_i=154.9e-3, z_i=-0.85,
-                           osmol_neutral_start=True,fixed_osm=False):
+    def set_ion_properties(self,
+                           na_i=0.014,
+                           k_i=0.1229,
+                           cl_i=0.0052,
+                           x_i= 0.1549,
+                           z_i=-0.85,
+                           osmol_neutral_start=False):
         """
         - Adjustment of starting concentrations to ensure starting electroneutrality
        old defaults: na_i=14.001840415288e-3, k_i=122.870162657e-3, cl_i=5.1653366e-3,
                            x_i=154.972660318083e-3, z_i=-0.85
+
+                            na_i=0.013614929701933197,
+                           k_i=0.12323046997950128,
+                           cl_i=0.005161213856695764,
+                           x_i= 0.15499338647116973,
+                           z_i=-0.85,
+                           osmol_neutral_start=False)
         """
         self.na_i, self.k_i, self.cl_i, self.x_i, self.z_i = na_i, k_i, cl_i, x_i, z_i  # Intracellular ion conc.
         self.na_i_start, self.x_start, self.z_start = na_i, x_i, z_i
@@ -121,8 +131,6 @@ class Compartment:
         self.x_o = 29.5e-3
         self.osm_o = self.na_o + self.k_o + self.cl_o + self.x_o
         self.osm_initial = self.na_i + self.k_i + self.cl_i + self.x_i
-        if fixed_osm:
-            self.fixed_osm = True
 
         if osmol_neutral_start:
             self.k_i = self.cl_i - self.z_i * self.x_i - self.na_i
@@ -257,13 +265,13 @@ class Compartment:
 
         # Note that X_i values may change based on wether there is adjustment with z change
 
-    def update_volumes(self):
+    def update_volumes(self,avg_osmo = 0):
         """ Calculates the new compartment volume (dm3)
         Elongation should occur radially
         """
-        if self.fixed_osm:
-            self.osm_i = self.osm_initial
-            self.x_i = self.osm_i - self.na_i - self.k_i-self.cl_i
+        if self.adjust_x_bool:
+            self.osm_i = avg_osmo
+            self.x_i = self.osm_i - self.na_i - self.k_i - self.cl_i
         else:
             self.osm_i = self.na_i + self.k_i + self.cl_i + self.x_i
 
@@ -317,6 +325,11 @@ class Compartment:
                  self.d_k_i, self.d_k_leak, self.d_k_atpase, self.d_k_kcc2,
                  self.d_cl_i, self.d_cl_leak, self.d_cl_kcc2,
                  self.v, self.E_k, self.E_cl]
+
+        if self.synapse_on:
+            array.append(self.synapse_dict["synapse_conductance"] * self.r )
+            #save g_synapse if synapse present
+
         return array
 
     def x_flux(self):
@@ -342,10 +355,8 @@ class Compartment:
             t_diff = (self.zflux_params["end_t"] - self.zflux_params["start_t"]) / self.dt
             self.z_inc = self.z_diff / t_diff
             self.zflux_setup = False
-            self.fixed_osm = self.zflux_params["fixed_osm"]
         else:
             self.z_i += self.z_inc
-
 
     def adjust_x(self):
         """

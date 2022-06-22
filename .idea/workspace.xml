@@ -7,7 +7,33 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="463dabb2-c92a-4ec9-9ee6-971ec234e991" name="Default Changelist" comment="" />
+    <list default="true" id="463dabb2-c92a-4ec9-9ee6-971ec234e991" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Figure_6b_combination_figure.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SS_gk200_HH" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SS_gk200_HH_settings" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SS_gk200_HH_v2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SS_gk200_HH_v2_settings" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SS_gk2_HH_v2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SS_gk2_HH_v2_settings" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SS_gk80_HH" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_6_multi_synapses-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_6b_kcc2_multi_synapses-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_6b_kcc2_multi_synapses-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_6b_z_multi_synapses-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/Figure_6b_z_multi_synapses-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_6_multi_synapses.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_6a_NMDA_vs_GABA.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_6a_NMDA_vs_GABA.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_6b_baselines.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_6b_baselines.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_6b_kcc2_multi_synapses.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_6b_kcc2_multi_synapses.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Figure_6b_z_multi_synapses.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Figure_6b_z_multi_synapses.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Template view.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Template view.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constants.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller_from_hdf.py" beforeDir="false" afterPath="$PROJECT_DIR$/controller_from_hdf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphing.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/simulator.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simulator3.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/synapse.py" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,7 +62,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -46,21 +72,30 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$USER_HOME$/AppData/Local/Programs/Python/Python39/Lib/site-packages/h5py/_hl/group.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/simulator_from_hdf.py" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Programs/Python/Python39/Lib/site-packages/h5py/_hl/files.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$USER_HOME$/AppData/Local/Programs/Python/Python39/Lib/site-packages/h5py/_hl/dataset.py" root0="SKIP_INSPECTION" />
+  </component>
   <component name="JupyterTrust" id="5532e97b-89ea-4989-88fe-5d4c62c54ea1" />
   <component name="ProjectId" id="1mYNQqL6gztYHLk7zHgelTDULXX" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="ignore.virus.scanning.warn.message" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Kira Code/model-of-neuronal-chloride-homeostasis-master/multi-compartment_multi-anion-8161bb361e3706f5dc72a1de7fea8444c6283c6a/diffusion.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/controller.py" />
     <property name="run.code.analysis.last.selected.profile" value="aDefault" />
-    <property name="settings.editor.selected.configurable" value="PyConsoleConfigurable.Python Console" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Python" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -71,7 +106,7 @@
       </console-settings>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Controller">
+  <component name="RunManager" selected="Python.Controller_from_HDF">
     <configuration name="Controller" type="PythonConfigurationType" factoryName="Python">
       <module name="Multicompartment Trials" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -79,13 +114,35 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="D:\Programs\Anaconda\python.exe" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/controller.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Controller_from_HDF" type="PythonConfigurationType" factoryName="Python">
+      <module name="Multicompartment Trials" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Eran\AppData\Local\Programs\Python\Python39\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/controller.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/controller_from_hdf.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -142,6 +199,7 @@
       <item itemvalue="Python.Jupyter notebook" />
       <item itemvalue="Python.Sandbox" />
       <item itemvalue="Python.Controller" />
+      <item itemvalue="Python.Controller_from_HDF" />
     </list>
   </component>
   <component name="ServiceViewManager">
@@ -217,6 +275,20 @@
       <workItem from="1630690897332" duration="1210000" />
       <workItem from="1630754106323" duration="3763000" />
       <workItem from="1630858324585" duration="1578000" />
+      <workItem from="1649129155876" duration="15064000" />
+      <workItem from="1649160696845" duration="5083000" />
+      <workItem from="1649919426570" duration="20345000" />
+      <workItem from="1650098538047" duration="13988000" />
+      <workItem from="1650356958719" duration="9309000" />
+      <workItem from="1650377003186" duration="5451000" />
+      <workItem from="1650452221684" duration="16981000" />
+      <workItem from="1650613321912" duration="7686000" />
+      <workItem from="1650786862543" duration="24363000" />
+      <workItem from="1651059464186" duration="5446000" />
+      <workItem from="1654678680389" duration="9380000" />
+      <workItem from="1654870525459" duration="735000" />
+      <workItem from="1655796633726" duration="674000" />
+      <workItem from="1655900090802" duration="2150000" />
     </task>
     <servers />
   </component>
@@ -235,16 +307,40 @@
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
+  </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/compartment.py</url>
+          <line>258</line>
+          <option name="timeStamp" value="43" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="dt" />
+        <watch expression="self" />
       </configuration>
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Multicompartment_Trials$Controller.coverage" NAME="Controller Coverage Results" MODIFIED="1622976468303" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Multicompartment_Trials$Sandbox.coverage" NAME="Sandbox Coverage Results" MODIFIED="1610872878802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/msc_code_repo$Controller.coverage" NAME="Controller Coverage Results" MODIFIED="1653039658974" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Multicompartment_Trials$Simulator.coverage" NAME="Controller Coverage Results" MODIFIED="1619517360404" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/msc_code_repo$Controller_from_HDF.coverage" NAME="Controller_from_HDF Coverage Results" MODIFIED="1654699501315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
